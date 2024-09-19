@@ -9,17 +9,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{BCDD88E8-992E-4798-A26E-12FB1F55E5A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "Models\Models.csproj", "{606A5782-9E48-4A05-9893-B633A365A0D8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PracticeWithTypes", "PracticeWithTypes\PracticeWithTypes.csproj", "{CCE95D09-B22C-4E54-BF6A-0B165D7108EB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{606A5782-9E48-4A05-9893-B633A365A0D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{606A5782-9E48-4A05-9893-B633A365A0D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{606A5782-9E48-4A05-9893-B633A365A0D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{606A5782-9E48-4A05-9893-B633A365A0D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCE95D09-B22C-4E54-BF6A-0B165D7108EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCE95D09-B22C-4E54-BF6A-0B165D7108EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCE95D09-B22C-4E54-BF6A-0B165D7108EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCE95D09-B22C-4E54-BF6A-0B165D7108EB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0097849E-39FC-49C1-B05C-98D472240A58}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{606A5782-9E48-4A05-9893-B633A365A0D8} = {2DAB60D7-5A6B-4CEC-A89D-2D0EA563B334}
+		{CCE95D09-B22C-4E54-BF6A-0B165D7108EB} = {BCDD88E8-992E-4798-A26E-12FB1F55E5A5}
 	EndGlobalSection
 EndGlobal
