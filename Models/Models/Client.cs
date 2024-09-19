@@ -1,6 +1,6 @@
 ﻿using Models.ValueObjects;
 
-namespace Models;
+namespace BankSystem.Domain.Models;
 /// <summary>
 /// Модель клиента.
 /// </summary>

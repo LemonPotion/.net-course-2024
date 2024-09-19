@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics.Contracts;
 using Models.ValueObjects;
 
-namespace Models;
+namespace BankSystem.Domain.Models;
 
 /// <summary>
 /// Модель сотрудника
@@ -11,5 +11,5 @@ public class Employee : Person
     /// <summary>
     /// Контракт.
     /// </summary>
-    public string? Contract { get; set; }
+    public string Contract { get; set; }
 }

@@ -1,4 +1,4 @@
-﻿namespace Models;
+﻿namespace BankSystem.Domain.Models;
 
 /// <summary>
 /// Базовый абстрактный класс модели.
@@ -9,8 +9,8 @@ public abstract class BaseModel
     /// Уникальный идентификатор.
     /// </summary>
     public Guid Id { get; set; }
-    
-    public override bool Equals(object? obj)
+
+    public override bool Equals(object obj)
     {
         if (obj == null)
             return false;
@@ -20,12 +20,12 @@ public abstract class BaseModel
             return false;
         return true;
     }
-    
+
     public override int GetHashCode()
     {
         return Id.GetHashCode();
     }
-    
+
     /// <summary>
     /// Переопределение метода для получения всех значений в виде string.
     /// </summary>

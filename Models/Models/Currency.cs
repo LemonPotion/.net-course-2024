@@ -1,4 +1,4 @@
-﻿namespace Models;
+﻿namespace BankSystem.Domain.Models;
 
 public struct Currency
 {
@@ -7,17 +7,17 @@ public struct Currency
     /// Код валюты (например, USD, EUR).
     /// </summary>
     public string Code { get; }
-    
+
     /// <summary>
     /// Название валюты (например, Доллар США, Евро)
     /// </summary>
     public string Name { get; }
-    
+
     /// <summary>
     /// Символ валюты (например, $, €).
     /// </summary>
-    public string Symbol { get;}
-    
+    public string Symbol { get; }
+
     public Currency(string symbol, string name, string code)
     {
         Symbol = symbol;
@@ -25,7 +25,7 @@ public struct Currency
         Code = code;
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         if (obj is null)
         {
@@ -35,7 +35,7 @@ public struct Currency
         {
             return false;
         }
-        else if(currency.Code != Code && currency.Symbol != Symbol && currency.Name != Name)
+        else if (currency.Code != Code && currency.Symbol != Symbol && currency.Name != Name)
         {
             return false;
         }
@@ -50,6 +50,6 @@ public struct Currency
 
     public override string ToString()
     {
-        return $"{nameof(Currency)} : Name= {Name}, Symbol= ({Symbol}), Code= {Code}";;
+        return $"{nameof(Currency)} : Name= {Name}, Symbol= ({Symbol}), Code= {Code}"; ;
     }
 }
