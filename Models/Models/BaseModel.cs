@@ -29,7 +29,7 @@ public abstract class BaseModel
     /// <summary>
     /// Переопределение метода для получения всех значений в виде string.
     /// </summary>
-    /// <returns>string</returns>
+    /// <returns>Значения всех полей в виде {prop.Name}: {prop.Value}.</returns>
     public override string ToString()
     {
         var props = GetType().GetProperties();

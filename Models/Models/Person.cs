@@ -2,7 +2,7 @@
 
 namespace BankSystem.Domain.Models;
 /// <summary>
-/// Модель человека
+/// Модель человека.
 /// </summary>
 public class Person : BaseModel
 {

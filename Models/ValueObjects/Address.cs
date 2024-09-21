@@ -1,6 +1,6 @@
 ﻿namespace Models.ValueObjects;
 /// <summary>
-/// Value object хранящий адрес
+/// Value object хранящий адрес.
 /// </summary>
 public class Address : BaseValueObject
 {

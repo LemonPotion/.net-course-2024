@@ -1,5 +1,7 @@
 ﻿namespace BankSystem.Domain.Models;
-
+/// <summary>
+/// Структура валюты.
+/// </summary>
 public struct Currency
 {
 

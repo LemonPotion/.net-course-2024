@@ -2,7 +2,7 @@
 
 namespace Models.ValueObjects;
 /// <summary>
-/// Базовый класс для value object
+/// Базовый класс для value object.
 /// </summary>
 public class BaseValueObject
 {
@@ -25,7 +25,7 @@ public class BaseValueObject
     /// Метод для сериализации обьектов BaseValueObject.
     /// </summary>
     /// <param name="valueObject">value object для сериализации.</param>
-    /// <returns>string</returns>
+    /// <returns>Сериализованный обьект.</returns>
     public string Serialize(BaseValueObject valueObject)
     {
         var serializedValueObject = JsonSerializer.Serialize(valueObject);

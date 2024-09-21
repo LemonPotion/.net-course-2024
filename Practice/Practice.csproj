@@ -8,6 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\BankSystem.App\BankSystem.App.csproj" />
       <ProjectReference Include="..\Models\BankSystem.Domain.csproj" />
     </ItemGroup>
 
