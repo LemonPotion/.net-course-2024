@@ -30,9 +30,5 @@ public class Person : BaseModel
     /// Адрес электронной почты.
     /// </summary>
     public string Email { get; set; }
-
-    /// <summary>
-    /// Адрес проживания.
-    /// </summary>
-    public Address Address { get; set; }
+    
 }
