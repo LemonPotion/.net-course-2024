@@ -26,32 +26,5 @@ public struct Currency
         Name = name;
         Code = code;
     }
-
-    public override bool Equals(object obj)
-    {
-        if (obj is null)
-        {
-            return false;
-        }
-        else if (obj is not Currency currency)
-        {
-            return false;
-        }
-        else if (currency.Code != Code && currency.Symbol != Symbol && currency.Name != Name)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    public override int GetHashCode()
-    {
-        return base.GetHashCode();
-    }
-
-    public override string ToString()
-    {
-        return $"{nameof(Currency)} : Name= {Name}, Symbol= ({Symbol}), Code= {Code}"; ;
-    }
+    
 }

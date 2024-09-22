@@ -31,7 +31,6 @@ public class BankService
             BirthDay = client.BirthDay,
             PhoneNumber = client.PhoneNumber,
             Email = client.Email,
-            Address = client.Address
         };
     }
     
