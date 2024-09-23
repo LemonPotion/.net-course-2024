@@ -1,15 +1,24 @@
-﻿using Models.ValueObjects;
-
+﻿
 namespace BankSystem.Domain.Models;
 /// <summary>
 /// Модель человека.
 /// </summary>
-public class Person : BaseModel
+public class Person
 {
     /// <summary>
-    /// Полное имя.
+    /// Имя.
     /// </summary>
-    public FullName FullName { get; set; }
+    public string Firstname { get; set; }
+    
+    /// <summary>
+    /// Фамилия.
+    /// </summary>
+    public string Surname { get; set; }
+    
+    /// <summary>
+    /// Отчество.
+    /// </summary>
+    public string LastName { get; set; }
 
     /// <summary>
     /// Дата рождения.
