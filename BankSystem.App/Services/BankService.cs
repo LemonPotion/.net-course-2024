@@ -27,8 +27,10 @@ public class BankService
     {
         return new Employee
         {
-            FullName = client.FullName,
             BirthDay = client.BirthDay,
+            Firstname = client.Firstname,
+            Surname = client.Surname,
+            LastName = client.LastName,
             PhoneNumber = client.PhoneNumber,
             Email = client.Email,
         };
