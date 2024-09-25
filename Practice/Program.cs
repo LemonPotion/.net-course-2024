@@ -12,40 +12,65 @@ class Program
     }
 
     private static void ListAndDictionary()
+{
+    var testDataGenerator = new TestDataGenerator();
+    var iterations = 100;
+    var stopwatch = new Stopwatch();
+    
+
+    var clientList = testDataGenerator.GenerateClients();
+    var clientDictionary = testDataGenerator.GenerateClientsDictionary();
+    var key = clientDictionary.ElementAt(115).Key;
+    var employeeList = testDataGenerator.GenerateEmployees();
+    
+
+    var listSearchTime = TimeSpan.Zero;
+    for (var i = 0; i < iterations; i++)
     {
-        var testDataGenerator = new TestDataGenerator();
-        var stopwatch = new Stopwatch();
-        
-        var clientList = testDataGenerator.GenerateClients();
-        stopwatch.Start();
+        stopwatch.Restart();
         var clientFromList = clientList.FirstOrDefault(c => c.PhoneNumber == clientList[115].PhoneNumber);
         stopwatch.Stop();
-        Console.WriteLine($"Найден сотрудник: {clientFromList.Firstname} по номеру :{clientFromList.PhoneNumber} за {stopwatch.Elapsed}");
-        
-        var clientDictionary = testDataGenerator.GenerateClientsDictionary();
-        var key = clientDictionary.ElementAt(115).Key; 
+        listSearchTime += stopwatch.Elapsed;
+    }
+    Console.WriteLine($"Среднее время поиска в списке: {listSearchTime / iterations}");
+    
+    var dictionarySearchTime = TimeSpan.Zero;
+    for (var i = 0; i < iterations; i++)
+    {
         stopwatch.Restart();
         var clientFromDictionary = clientDictionary[key];
         stopwatch.Stop();
-        Console.WriteLine($"Найден сотрудник: {clientFromDictionary.Firstname} по номеру: {clientFromDictionary.PhoneNumber} за {stopwatch.Elapsed}");
-        
-        var filteredClientsList = clientList.Where(c => c.Age < 1).ToList();
-        Console.WriteLine($"Надено {filteredClientsList.Count} клиентов");
-
-        var employeeList = testDataGenerator.GenerateEmployees();
-        var minSalary = employeeList.Min(e => e.Salary);
-        Console.WriteLine($"Минимальная зарплата сотрудника: {minSalary}");
-        
+        dictionarySearchTime += stopwatch.Elapsed;
+    }
+    Console.WriteLine($"Среднее время поиска в словаре: {dictionarySearchTime / iterations}");
+    
+    var filteredClientsList = clientList.Where(c => c.Age < 1).ToList();
+    Console.WriteLine($"Найдено {filteredClientsList.Count} клиентов");
+    
+    var minSalary = employeeList.Min(e => e.Salary);
+    Console.WriteLine($"Минимальная зарплата сотрудника: {minSalary}");
+    
+    var lastOrDefaultTime = TimeSpan.Zero;
+    for (var i = 0; i < iterations; i++)
+    {
         stopwatch.Restart();
         var lastOrDefaultClient = clientDictionary.LastOrDefault();
         stopwatch.Stop();
-        Console.WriteLine($"Поиск с LastOrDefault: {stopwatch.Elapsed}");
-        stopwatch.Restart();
-        var lastClient = clientDictionary[lastOrDefaultClient.Key];
-        stopwatch.Stop();
-        Console.WriteLine($"Поиск по ключу: {stopwatch.Elapsed}");
-
+        lastOrDefaultTime += stopwatch.Elapsed;
     }
+    Console.WriteLine($"Среднее время для LastOrDefault: {lastOrDefaultTime/ iterations}");
+    
+    var dictionaryKeySearchTimeLast = TimeSpan.Zero;
+    var lastClientKey = clientDictionary.LastOrDefault().Key;
+    for (var i = 0; i < iterations; i++)
+    {
+        stopwatch.Restart();
+        var clientFromDictionary = clientDictionary[lastClientKey];
+        stopwatch.Stop();
+        dictionaryKeySearchTimeLast += stopwatch.Elapsed;
+    }
+    Console.WriteLine($"Среднее время для поиска по ключу: {dictionaryKeySearchTimeLast/ iterations}");
+}
 
     public static void RefAndValueType()
     {
@@ -73,7 +98,7 @@ class Program
         var client = new Client()
         {
             Email = "e@mail.com",
-            BankAccountNumber = 123,
+            BankAccountNumber = "123",
         };
         var convertedEmployee = bankService.ConvertClientToEmployee(client);
         Console.WriteLine(convertedEmployee.Email);

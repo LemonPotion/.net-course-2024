@@ -14,7 +14,7 @@ public class TestDataGenerator
             var client = new Client()
             {
                 BirthDay = _faker.Date.Past(),
-                BankAccountNumber = _faker.Random.Int(),
+                BankAccountNumber = _faker.Random.Int().ToString(),
                 Email = _faker.Internet.Email(),
                 Firstname = _faker.Name.FirstName(),
                 LastName = _faker.Name.LastName(),
@@ -33,7 +33,7 @@ public class TestDataGenerator
             var client = new Client()
             {
                 BirthDay = _faker.Date.Past(),
-                BankAccountNumber = _faker.Random.Int(),
+                BankAccountNumber = _faker.Random.Int().ToString(),
                 Email = _faker.Internet.Email(),
                 Firstname = _faker.Name.FirstName(),
                 LastName = _faker.Name.LastName(),
