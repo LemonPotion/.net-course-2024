@@ -3,7 +3,7 @@ using BankSystem.Domain.Models;
 using FluentAssertions;
 using Xunit;
 
-namespace BankSystem.Tests;
+namespace BankSystem.App.Tests;
 
 public class EquivalenceTests
 {
