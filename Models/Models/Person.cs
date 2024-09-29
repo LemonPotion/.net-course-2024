@@ -15,4 +15,24 @@ public class Person
     
     public string Email { get; set; }
     
+    public override bool Equals(object? obj)
+    {
+        if (obj == null)
+            return false;
+        else if (obj is not Person entity)
+            return false;
+        else if (entity.Firstname != Firstname)
+            return false;
+        else if (entity.LastName != LastName)
+            return false;
+        else if (entity.BirthDay != BirthDay)
+            return false;
+        return true;
+    }
+
+    public override int GetHashCode()
+    {
+        return Firstname.GetHashCode() + LastName.GetHashCode() + BirthDay.GetHashCode();
+    }
+    
 }

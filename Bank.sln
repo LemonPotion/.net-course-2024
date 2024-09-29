@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{FC5EB2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankSystem.App", "BankSystem.App\BankSystem.App.csproj", "{4DBD1597-4CED-4039-ABD0-775FC7C91B5E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BankSystem.App.Tests", "BankSystem.App.Tests\BankSystem.App.Tests.csproj", "{EAFF9A3D-19B9-4E7B-B90E-B4177E3059CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{4DBD1597-4CED-4039-ABD0-775FC7C91B5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DBD1597-4CED-4039-ABD0-775FC7C91B5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DBD1597-4CED-4039-ABD0-775FC7C91B5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAFF9A3D-19B9-4E7B-B90E-B4177E3059CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAFF9A3D-19B9-4E7B-B90E-B4177E3059CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAFF9A3D-19B9-4E7B-B90E-B4177E3059CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAFF9A3D-19B9-4E7B-B90E-B4177E3059CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{606A5782-9E48-4A05-9893-B633A365A0D8} = {FC5EB24F-8A9E-426B-B571-85B1608237E6}
 		{CCE95D09-B22C-4E54-BF6A-0B165D7108EB} = {BCDD88E8-992E-4798-A26E-12FB1F55E5A5}
 		{4DBD1597-4CED-4039-ABD0-775FC7C91B5E} = {2DAB60D7-5A6B-4CEC-A89D-2D0EA563B334}
+		{EAFF9A3D-19B9-4E7B-B90E-B4177E3059CC} = {2DAB60D7-5A6B-4CEC-A89D-2D0EA563B334}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0097849E-39FC-49C1-B05C-98D472240A58}
