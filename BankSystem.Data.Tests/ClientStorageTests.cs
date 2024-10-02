@@ -17,10 +17,7 @@ public class ClientStorageTests
         var clients = dataGenerator.GenerateClients();
         
         //Act
-        foreach (var client in clients)
-        {
-            storage.AddClient(client);
-        }
+        storage.AddRange(clients);
         
         //Assert
         storage.Clients.Should().BeEquivalentTo(clients);
@@ -33,17 +30,13 @@ public class ClientStorageTests
         var dataGenerator = new TestDataGenerator();
         var storage = new ClientStorage();
         var clients = dataGenerator.GenerateClients();
-        foreach (var client in clients)
-        {
-            storage.AddClient(client);
-        }
+        storage.AddRange(clients);
         
         //Act
-        var youngestClient = storage.Clients.MinBy(c => c.Age);
+        var youngestClient = storage.GetYoungestClient();
         var expectedYoungestClient = clients.MinBy(c => c.Age);
         
         //Assert
-        youngestClient.Should().BeOfType<Client>();
         youngestClient.Should().BeEquivalentTo(expectedYoungestClient);
     }
     
@@ -54,17 +47,13 @@ public class ClientStorageTests
         var dataGenerator = new TestDataGenerator();
         var storage = new ClientStorage();
         var clients = dataGenerator.GenerateClients();
-        foreach (var client in clients)
-        {
-            storage.AddClient(client);
-        }
+        storage.AddRange(clients);
         
         //Act
-        var oldestClient = storage.Clients.MaxBy(c => c.Age);
+        var oldestClient = storage.GetOldestClient();
         var expectedOldestClient = clients.MaxBy(c => c.Age);
         
         //Assert
-        oldestClient.Should().BeOfType<Client>();
         oldestClient.Should().BeEquivalentTo(expectedOldestClient);
     }
     
@@ -75,13 +64,10 @@ public class ClientStorageTests
         var dataGenerator = new TestDataGenerator();
         var storage = new ClientStorage();
         var clients = dataGenerator.GenerateClients();
-        foreach (var client in clients)
-        {
-            storage.AddClient(client);
-        }
+        storage.AddRange(clients);
         
         //Act
-        var averageAge = storage.Clients.Average(c => c.Age);
+        var averageAge = storage.GetAverageClientAge();
         var expectedAverageAge = clients.Average(c => c.Age);
         
         //Assert

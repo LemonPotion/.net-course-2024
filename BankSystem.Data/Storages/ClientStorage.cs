@@ -16,4 +16,24 @@ public class ClientStorage
     {
         _clients.Add(client);
     }
+    
+    public void AddRange(IEnumerable<Client> clients)
+    {
+        _clients.AddRange(clients);
+    }
+
+    public Client GetYoungestClient()
+    {
+        return _clients.MinBy(c => c.Age);
+    }
+
+    public Client GetOldestClient()
+    {
+       return _clients.MaxBy(c => c.Age);
+    }
+
+    public double GetAverageClientAge()
+    {
+        return _clients.Average(c => c.Age);
+    }
 }
