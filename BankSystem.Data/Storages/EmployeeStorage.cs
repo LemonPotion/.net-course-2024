@@ -21,6 +21,22 @@ public class EmployeeStorage
     {
         _employees.AddRange(employees);
     }
+
+    public void UpdateEmployee(Employee employee, Employee updatedEmployee)
+    {
+        var originalEmployee = _employees.FirstOrDefault(e=> e.Equals(employee));
+
+        if (originalEmployee is null) return;
+        
+        originalEmployee.FirstName = updatedEmployee.FirstName;
+        originalEmployee.LastName = updatedEmployee.LastName;
+        originalEmployee.Contract = updatedEmployee.Contract;
+        originalEmployee.BirthDay = updatedEmployee.BirthDay;
+        originalEmployee.Salary = updatedEmployee.Salary;
+        originalEmployee.Email = updatedEmployee.Email;
+        originalEmployee.PassportNumber = updatedEmployee.PassportNumber;
+        originalEmployee.PhoneNumber = updatedEmployee.PhoneNumber;
+    }
     
     public Employee GetYoungestEmployee()
     {

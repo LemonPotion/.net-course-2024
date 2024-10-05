@@ -19,7 +19,7 @@ public class EquivalenceTests
             BankAccountNumber = key.BankAccountNumber,
             BirthDay = key.BirthDay,
             Email = key.Email,
-            Firstname = key.Firstname,
+            FirstName = key.FirstName,
             LastName = key.LastName,
             PhoneNumber = key.PhoneNumber
         };
@@ -43,7 +43,7 @@ public class EquivalenceTests
             BankAccountNumber = key.BankAccountNumber,
             BirthDay = key.BirthDay,
             Email = key.Email,
-            Firstname = key.Firstname,
+            FirstName = key.FirstName,
             LastName = key.LastName,
             PhoneNumber = key.PhoneNumber
         };
@@ -67,7 +67,7 @@ public class EquivalenceTests
             BirthDay = employee.BirthDay,
             Contract = employee.Contract,
             Email = employee.Email,
-            Firstname = employee.Firstname,
+            FirstName = employee.FirstName,
             LastName = employee.LastName,
             PhoneNumber = employee.PhoneNumber,
             Salary = employee.Salary

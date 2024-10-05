@@ -13,12 +13,13 @@ public class TestDataGenerator
         {
             var client = new Client()
             {
-                BirthDay = _faker.Date.Past(),
+                BirthDay = _faker.Date.Past(60, DateTime.Now.AddYears(-18)),
                 BankAccountNumber = _faker.Random.Int().ToString(),
                 Email = _faker.Internet.Email(),
-                Firstname = _faker.Name.FirstName(),
+                FirstName = _faker.Name.FirstName(),
                 LastName = _faker.Name.LastName(),
                 PhoneNumber = _faker.Phone.PhoneNumber(),
+                PassportNumber = _faker.Random.Int().ToString()
             };
             clients.Add(client);
         }
@@ -32,12 +33,13 @@ public class TestDataGenerator
         {
             var client = new Client()
             {
-                BirthDay = _faker.Date.Past(),
+                BirthDay = _faker.Date.Past(60, DateTime.Now.AddYears(-18)),
                 BankAccountNumber = _faker.Random.Int().ToString(),
                 Email = _faker.Internet.Email(),
-                Firstname = _faker.Name.FirstName(),
+                FirstName = _faker.Name.FirstName(),
                 LastName = _faker.Name.LastName(),
                 PhoneNumber = _faker.Phone.PhoneNumber(),
+                PassportNumber = _faker.Random.Int().ToString()
             };
             clients.Add(client.PhoneNumber,client);
         }
@@ -51,19 +53,19 @@ public class TestDataGenerator
         {
             var employee = new Employee()
             {
-                BirthDay = _faker.Date.Past(),
+                BirthDay = _faker.Date.Past(60, DateTime.Now.AddYears(-18)),
                 Contract = _faker.Lorem.Text(),
                 Email = _faker.Internet.Email(),
-                Firstname = _faker.Name.FirstName(),
+                FirstName = _faker.Name.FirstName(),
                 LastName = _faker.Name.LastName(),
                 PhoneNumber = _faker.Phone.PhoneNumber(),
-                Salary = _faker.Random.Decimal()
+                Salary = _faker.Random.Decimal(),
+                PassportNumber = _faker.Random.Int().ToString()
             };
             employees.Add(employee);
         }
         return employees;
     }
-    
     public Dictionary<Client, Account> GenerateClientAccount()
     {
         var dictionary = new Dictionary<Client, Account>();
@@ -71,12 +73,13 @@ public class TestDataGenerator
         {
             var client = new Client()
             {
-                BirthDay = _faker.Date.Past(),
+                BirthDay = _faker.Date.Past(60, DateTime.Now.AddYears(-18)),
                 BankAccountNumber = _faker.Random.Int().ToString(),
                 Email = _faker.Internet.Email(),
-                Firstname = _faker.Name.FirstName(),
+                FirstName = _faker.Name.FirstName(),
                 LastName = _faker.Name.LastName(),
                 PhoneNumber = _faker.Phone.PhoneNumber(),
+                PassportNumber = _faker.Random.Int().ToString()
             };
 
             var account = new Account()
@@ -99,12 +102,13 @@ public class TestDataGenerator
         {
             var client = new Client()
             {
-                BirthDay = _faker.Date.Past(),
+                BirthDay = _faker.Date.Past(60, DateTime.Now.AddYears(-18)),
                 BankAccountNumber = _faker.Random.Int().ToString(),
                 Email = _faker.Internet.Email(),
-                Firstname = _faker.Name.FirstName(),
+                FirstName = _faker.Name.FirstName(),
                 LastName = _faker.Name.LastName(),
                 PhoneNumber = _faker.Phone.PhoneNumber(),
+                PassportNumber = _faker.Random.Int().ToString()
             };
             
             var accounts = new List<Account>();
@@ -123,5 +127,13 @@ public class TestDataGenerator
             dictionary.Add(client,accounts);
         }
         return dictionary;
+    }
+    
+    public List<Account> GenerateAccounts()
+    {
+        var accountFaker = new Faker<Account>()
+            .RuleFor(a => a.Currency, f => new Currency(f.Finance.Currency().Code, f.Finance.Currency().Symbol, f.Finance.Currency().Description))
+            .RuleFor(a => a.Amount, f => f.Random.Int());
+        return accountFaker.Generate(1000);
     }
 }
