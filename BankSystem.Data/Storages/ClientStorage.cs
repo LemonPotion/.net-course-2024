@@ -45,29 +45,29 @@ public class ClientStorage
         existingAccount.Amount = updatedAccount.Amount;
     }
     
-    public IEnumerable<Client> GetFilteredClients(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
+    public Dictionary<Client, List<Account>> GetFilteredClients(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
     {
-        var clients = GetAll().Keys.AsQueryable();
+        var clients = GetAll().AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(firstName))
-            clients = clients.Where(c => c.FirstName.Contains(firstName));
+            clients = clients.Where(c => c.Key.FirstName.Contains(firstName));
         
         if (!string.IsNullOrWhiteSpace(lastName))
-            clients = clients.Where(c => c.LastName.Contains(lastName));
+            clients = clients.Where(c => c.Key.LastName.Contains(lastName));
 
         if (!string.IsNullOrWhiteSpace(phoneNumber))
-            clients = clients.Where(c => c.PhoneNumber.Contains(phoneNumber));
+            clients = clients.Where(c => c.Key.PhoneNumber.Contains(phoneNumber));
         
         if (!string.IsNullOrWhiteSpace(passportNumber))
-            clients = clients.Where(c => c.PassportNumber.Contains(passportNumber));
+            clients = clients.Where(c => c.Key.PassportNumber.Contains(passportNumber));
 
         if (startDate.HasValue)
-            clients = clients.Where(c => c.BirthDay >= startDate.Value);
+            clients = clients.Where(c => c.Key.BirthDay >= startDate.Value);
 
         if (endDate.HasValue)
-            clients = clients.Where(c => c.BirthDay <= endDate.Value);
+            clients = clients.Where(c => c.Key.BirthDay <= endDate.Value);
 
-        return clients;
+        return clients.ToDictionary();
     }
 
     public Dictionary<Client,List<Account>> GetAll()

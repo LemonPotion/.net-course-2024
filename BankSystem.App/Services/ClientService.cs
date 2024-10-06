@@ -54,7 +54,7 @@ public class ClientService
         _clientStorage.UpdateClientAccount(client, account, updatedAccount);
     }
 
-    public IEnumerable<Client> GetFilteredClients(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
+    public Dictionary<Client,List<Account>> GetFilteredClients(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
     {
         return _clientStorage.GetFilteredClients(firstName, lastName, phoneNumber, passportNumber, startDate, endDate);
     }
