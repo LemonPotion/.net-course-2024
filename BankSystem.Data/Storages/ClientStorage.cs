@@ -47,7 +47,7 @@ public class ClientStorage
     
     public Dictionary<Client, List<Account>> GetFilteredClients(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
     {
-        var clients = GetAll().AsQueryable();
+        var clients = _clients.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(firstName))
             clients = clients.Where(c => c.Key.FirstName.Contains(firstName));
@@ -68,11 +68,6 @@ public class ClientStorage
             clients = clients.Where(c => c.Key.BirthDay <= endDate.Value);
 
         return clients.ToDictionary();
-    }
-
-    public Dictionary<Client,List<Account>> GetAll()
-    {
-        return _clients;
     }
     
     public Client GetYoungestClient()
