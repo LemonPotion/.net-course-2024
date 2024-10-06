@@ -40,7 +40,7 @@ public class EmployeeStorage
     
     public IEnumerable<Employee> GetFilteredEmployees(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
     {
-        var employees = GetAll().AsQueryable();
+        var employees = _employees.AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(firstName))
             employees = employees.Where(c => c.FirstName.Contains(firstName));
@@ -61,11 +61,6 @@ public class EmployeeStorage
             employees = employees.Where(c => c.BirthDay <= endDate.Value);
 
         return employees;
-    }
-
-    public IEnumerable<Employee> GetAll()
-    {
-        return _employees;
     }
     
     public Employee GetYoungestEmployee()
