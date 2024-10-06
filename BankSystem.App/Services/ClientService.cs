@@ -36,7 +36,6 @@ public class ClientService
                 GetDefaultAccount()
             };
             dictionary.Add(client, accounts);
-            
         }
         _clientStorage.AddRange(dictionary);
     }
@@ -47,38 +46,17 @@ public class ClientService
         
         if (_clientStorage.Clients.TryGetValue(client, out var accounts)) 
             accounts.Add(account);
-        
     }
     
-    public void UpdateClientAccount(Client client,Account account, Account updatedAccount)
+    public void UpdateClientAccount(Client client, Account account, Account updatedAccount)
     {
         ValidateClient(client);
         _clientStorage.UpdateClientAccount(client, account, updatedAccount);
     }
 
-    public IEnumerable<Client> GetFilteredClients(string? firstName , string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
+    public IEnumerable<Client> GetFilteredClients(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
     {
-        var clients = _clientStorage.Clients.Keys.AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(firstName))
-            clients = clients.Where(c => c.FirstName.Contains(firstName));
-        
-        if (!string.IsNullOrWhiteSpace(lastName))
-            clients = clients.Where(c => c.LastName.Contains(lastName));
-
-        if (!string.IsNullOrWhiteSpace(phoneNumber))
-            clients = clients.Where(c => c.PhoneNumber.Contains(phoneNumber));
-        
-        if (!string.IsNullOrWhiteSpace(passportNumber))
-            clients = clients.Where(c => c.PassportNumber.Contains(passportNumber));
-
-        if (startDate.HasValue)
-            clients = clients.Where(c => c.BirthDay >= startDate.Value);
-
-        if (endDate.HasValue)
-            clients = clients.Where(c => c.BirthDay <= endDate.Value);
-
-        return clients;
+        return _clientStorage.GetFilteredClients(firstName, lastName, phoneNumber, passportNumber, startDate, endDate);
     }
     
     private static Account GetDefaultAccount()

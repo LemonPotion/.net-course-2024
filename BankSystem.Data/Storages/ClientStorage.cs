@@ -5,7 +5,7 @@ namespace BankSystem.Data.Storages;
 public class ClientStorage
 {
     private readonly Dictionary<Client,List<Account>> _clients;
-    public Dictionary<Client, List<Account>> Clients => _clients;
+    public Dictionary<Client,List<Account>> Clients => _clients;
 
     public ClientStorage()
     {
@@ -32,7 +32,7 @@ public class ClientStorage
         }
     }
     
-    public void UpdateClientAccount(Client client,Account originalAccount, Account updatedAccount)
+    public void UpdateClientAccount(Client client, Account originalAccount, Account updatedAccount)
     {
         Clients.TryGetValue(client, out var accounts);
 
@@ -44,7 +44,37 @@ public class ClientStorage
         existingAccount.Currency = updatedAccount.Currency;
         existingAccount.Amount = updatedAccount.Amount;
     }
+    
+    public IEnumerable<Client> GetFilteredClients(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
+    {
+        var clients = GetAll().Keys.AsQueryable();
 
+        if (!string.IsNullOrWhiteSpace(firstName))
+            clients = clients.Where(c => c.FirstName.Contains(firstName));
+        
+        if (!string.IsNullOrWhiteSpace(lastName))
+            clients = clients.Where(c => c.LastName.Contains(lastName));
+
+        if (!string.IsNullOrWhiteSpace(phoneNumber))
+            clients = clients.Where(c => c.PhoneNumber.Contains(phoneNumber));
+        
+        if (!string.IsNullOrWhiteSpace(passportNumber))
+            clients = clients.Where(c => c.PassportNumber.Contains(passportNumber));
+
+        if (startDate.HasValue)
+            clients = clients.Where(c => c.BirthDay >= startDate.Value);
+
+        if (endDate.HasValue)
+            clients = clients.Where(c => c.BirthDay <= endDate.Value);
+
+        return clients;
+    }
+
+    public Dictionary<Client,List<Account>> GetAll()
+    {
+        return _clients;
+    }
+    
     public Client GetYoungestClient()
     {
         return _clients.Keys.MinBy(c=> c.Age);
