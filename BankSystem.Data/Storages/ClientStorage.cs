@@ -4,36 +4,89 @@ namespace BankSystem.Data.Storages;
 
 public class ClientStorage
 {
-    private readonly List<Client> _clients;
-    public IEnumerable<Client> Clients => _clients;
+    private readonly Dictionary<Client,List<Account>> _clients;
+    public Dictionary<Client,List<Account>> Clients => _clients;
 
     public ClientStorage()
     {
-        _clients = new List<Client>();
+        _clients = new Dictionary<Client, List<Account>>();
     }
 
-    public void AddClient(Client client)
+    public void AddClient(Client client, List<Account> accounts)
     {
-        _clients.Add(client);
+        _clients.Add(client, accounts);
     }
     
-    public void AddRange(IEnumerable<Client> clients)
+    public void AddRange(Dictionary<Client,List<Account>> clientAccountDictionary)
     {
-        _clients.AddRange(clients);
+        foreach (var item in clientAccountDictionary)
+        {
+            if (!_clients.TryGetValue(item.Key, out var client))
+            {
+                _clients.Add(item.Key, item.Value);
+            }
+            else
+            {
+                client.AddRange(item.Value);
+            }
+        }
+    }
+    
+    public void UpdateClientAccount(Client client, Account originalAccount, Account updatedAccount)
+    {
+        Clients.TryGetValue(client, out var accounts);
+
+        if (accounts is null) return;
+        var existingAccount = accounts.FirstOrDefault(a=> a.Equals(originalAccount));
+
+        if (existingAccount is null) return;
+        
+        existingAccount.Currency = updatedAccount.Currency;
+        existingAccount.Amount = updatedAccount.Amount;
+    }
+    
+    public IEnumerable<Client> GetFilteredClients(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
+    {
+        var clients = GetAll().Keys.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(firstName))
+            clients = clients.Where(c => c.FirstName.Contains(firstName));
+        
+        if (!string.IsNullOrWhiteSpace(lastName))
+            clients = clients.Where(c => c.LastName.Contains(lastName));
+
+        if (!string.IsNullOrWhiteSpace(phoneNumber))
+            clients = clients.Where(c => c.PhoneNumber.Contains(phoneNumber));
+        
+        if (!string.IsNullOrWhiteSpace(passportNumber))
+            clients = clients.Where(c => c.PassportNumber.Contains(passportNumber));
+
+        if (startDate.HasValue)
+            clients = clients.Where(c => c.BirthDay >= startDate.Value);
+
+        if (endDate.HasValue)
+            clients = clients.Where(c => c.BirthDay <= endDate.Value);
+
+        return clients;
     }
 
+    public Dictionary<Client,List<Account>> GetAll()
+    {
+        return _clients;
+    }
+    
     public Client GetYoungestClient()
     {
-        return _clients.MinBy(c => c.Age);
+        return _clients.Keys.MinBy(c=> c.Age);
     }
 
     public Client GetOldestClient()
     {
-       return _clients.MaxBy(c => c.Age);
+       return _clients.Keys.MaxBy(c=>c.Age);
     }
 
     public double GetAverageClientAge()
     {
-        return _clients.Average(c => c.Age);
+        return _clients.Keys.Average(c=> c.Age);
     }
 }
