@@ -21,7 +21,8 @@ public class EquivalenceTests
             Email = key.Email,
             FirstName = key.FirstName,
             LastName = key.LastName,
-            PhoneNumber = key.PhoneNumber
+            PhoneNumber = key.PhoneNumber,
+            PassportNumber = key.PassportNumber
         };
         
         //Act
@@ -45,7 +46,8 @@ public class EquivalenceTests
             Email = key.Email,
             FirstName = key.FirstName,
             LastName = key.LastName,
-            PhoneNumber = key.PhoneNumber
+            PhoneNumber = key.PhoneNumber,
+            PassportNumber = key.PassportNumber
         };
         
         //Act
@@ -70,7 +72,8 @@ public class EquivalenceTests
             FirstName = employee.FirstName,
             LastName = employee.LastName,
             PhoneNumber = employee.PhoneNumber,
-            Salary = employee.Salary
+            Salary = employee.Salary,
+            PassportNumber = employee.PassportNumber
         };
         
         //Act

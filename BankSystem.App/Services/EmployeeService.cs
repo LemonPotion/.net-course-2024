@@ -1,40 +1,41 @@
-﻿using BankSystem.App.Exceptions;
-using BankSystem.Data.Storages;
+﻿using System.Security.Cryptography;
+using BankSystem.App.Exceptions;
+using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 
 namespace BankSystem.App.Services;
 
 public class EmployeeService
 {
-     private readonly EmployeeStorage _employeeStorage;
+     private readonly IEmployeeStorage _employeeStorage;
 
-    public EmployeeService(EmployeeStorage employeeStorage)
+    public EmployeeService(IEmployeeStorage employeeStorage)
     {
         _employeeStorage = employeeStorage;
     }
 
-    public void AddEmployee(Employee employee)
+    public void Add(Employee employee)
     {
         ValidateEmployee(employee);
 
-        _employeeStorage.AddEmployee(employee);
-    }
-    
-    public void AddEmployeeRange(IEnumerable<Employee> employees)
-    {
-        _employeeStorage.AddRange(employees);
-    }
-    
-    public void UpdateEmployee(Employee employee, Employee updatedEmployee)
-    {
-        ValidateEmployee(employee);
-        ValidateEmployee(updatedEmployee);
-        _employeeStorage.UpdateEmployee(employee, updatedEmployee);
+        _employeeStorage.Add(employee);
     }
 
-    public IEnumerable<Employee> GetFilteredEmployees(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
+    public void Update(Employee employee)
     {
-        return _employeeStorage.GetFilteredEmployees(firstName, lastName, phoneNumber, passportNumber, startDate, endDate);
+        ValidateEmployee(employee);
+        _employeeStorage.Update(employee);
+    }
+
+    public void Delete(Employee employee)
+    {
+        ValidateEmployee(employee);
+        _employeeStorage.Delete(employee);
+    }
+
+    public IEnumerable<Employee> GetPaged(int pageNumber, int pageSize)
+    {
+        return _employeeStorage.Get(pageNumber, pageSize);
     }
     
     private static void ValidateEmployee(Employee employee)

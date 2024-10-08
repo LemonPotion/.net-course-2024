@@ -36,7 +36,7 @@ public class Person
 
     public override int GetHashCode()
     {
-        return FirstName.GetHashCode() + LastName.GetHashCode() + BirthDay.GetHashCode() + PassportNumber.GetHashCode();
+        return PassportNumber.GetHashCode();
     }
     
 }

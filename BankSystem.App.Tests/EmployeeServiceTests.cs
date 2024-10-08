@@ -8,22 +8,6 @@ namespace BankSystem.App.Tests;
 public class EmployeeServiceTests
 {
     [Fact]
-    public void EmployeeServiceAddEmployeeRangeShouldAddEmployees()
-    {
-        //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var employeeStorage = new EmployeeStorage();
-        var employeeService = new EmployeeService(employeeStorage);
-        var employees = testDataGenerator.GenerateEmployees();
-        
-        //Act
-        employeeService.AddEmployeeRange(employees);
-
-        //Assert
-        employeeStorage.Employees.Should().NotBeNull();
-    }
-    
-    [Fact]
     public void EmployeeServiceAddEmployeeShouldAddEmployee()
     {
         //Arrange
@@ -34,10 +18,31 @@ public class EmployeeServiceTests
         var employees = testDataGenerator.GenerateEmployees();
         
         //Act
-        employeeService.AddEmployee(employees.First());
+        employeeService.Add(employees.First());
 
         //Assert
         employeeStorage.Employees.Should().NotBeNull();
+    }
+    
+    [Fact]
+    public void EmployeeServiceGetPagedReturnsPagedEmployees()
+    {
+        //Arrange
+        var testDataGenerator = new TestDataGenerator();
+        var employeeStorage = new EmployeeStorage();
+        var employeeService = new EmployeeService(employeeStorage);
+        
+        var employees = testDataGenerator.GenerateEmployees();
+        foreach (var item in employees)
+        {
+            employeeService.Add(item);
+        }
+
+        //Act
+        var filteredEmployees = employeeService.GetPaged(1, 10);
+
+        //Assert
+        filteredEmployees.Should().NotBeNull();
     }
     
     [Fact]
@@ -51,37 +56,32 @@ public class EmployeeServiceTests
         var employees = testDataGenerator.GenerateEmployees();
         var originalEmployee = employees.First();
         var updatedEmployee = employees.Last();
+        updatedEmployee.PassportNumber = originalEmployee.PassportNumber;
         
-        employeeService.AddEmployee(originalEmployee);
+        employeeService.Add(originalEmployee);
         
         //Act
-        employeeService.UpdateEmployee(originalEmployee, updatedEmployee);
+        employeeService.Update(updatedEmployee);
         
         //Assert
         originalEmployee.Should().BeEquivalentTo(updatedEmployee);
     }
-
+    
     [Fact]
-    public void EmployeeServiceGetFilteredEmployeesReturnsFilteredEmployees()
+    public void EmployeeServiceDeleteEmployeeShouldDeleteEmployee()
     {
         //Arrange
         var testDataGenerator = new TestDataGenerator();
         var employeeStorage = new EmployeeStorage();
         var employeeService = new EmployeeService(employeeStorage);
         
-        var employees = testDataGenerator.GenerateEmployees();
-        var employee = employees.First();
-        employeeService.AddEmployeeRange(employees);
-
+        var employee = testDataGenerator.GenerateEmployees().First();
+        employeeService.Add(employee);
+        
         //Act
-        var filteredEmployees = employeeService.GetFilteredEmployees(employee.FirstName, 
-            employee.LastName, 
-            employee.PhoneNumber, 
-            employee.PassportNumber, 
-            DateTime.MinValue, 
-            DateTime.MaxValue);
-
+        employeeService.Delete(employee);
+        
         //Assert
-        filteredEmployees.Should().NotBeNull();
+        employeeStorage.Employees.Should().NotContain(employee);
     }
 }

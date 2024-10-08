@@ -1,8 +1,9 @@
-﻿using BankSystem.Domain.Models;
+﻿using BankSystem.App.Interfaces;
+using BankSystem.Domain.Models;
 
 namespace BankSystem.Data.Storages;
 
-public class ClientStorage
+public class ClientStorage : IClientStorage
 {
     private readonly Dictionary<Client,List<Account>> _clients;
     public Dictionary<Client,List<Account>> Clients => _clients;
@@ -11,10 +12,14 @@ public class ClientStorage
     {
         _clients = new Dictionary<Client, List<Account>>();
     }
-
-    public void AddClient(Client client, List<Account> accounts)
+    
+    public void Add(Client item)
     {
-        _clients.Add(client, accounts);
+        var accounts = new List<Account>
+        {
+            GetDefaultAccount()
+        };
+        _clients.Add(item, accounts);
     }
     
     public void AddRange(Dictionary<Client,List<Account>> clientAccountDictionary)
@@ -32,42 +37,33 @@ public class ClientStorage
         }
     }
     
-    public void UpdateClientAccount(Client client, Account originalAccount, Account updatedAccount)
+    public List<Client> Get(int pageNumber, int pageSize)
     {
-        Clients.TryGetValue(client, out var accounts);
+        var items = _clients.Keys
+            .Skip((pageNumber - 1) * pageSize) 
+            .Take(pageSize)
+            .ToList();
 
-        if (accounts is null) return;
-        var existingAccount = accounts.FirstOrDefault(a=> a.Equals(originalAccount));
-
-        if (existingAccount is null) return;
-        
-        existingAccount.Currency = updatedAccount.Currency;
-        existingAccount.Amount = updatedAccount.Amount;
+        return items;
     }
     
-    public Dictionary<Client, List<Account>> GetFilteredClients(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
+    public void Update(Client item)
     {
-        var clients = _clients.AsQueryable();
+        var client = _clients.Keys.FirstOrDefault(c=> c.PassportNumber == item.PassportNumber);
 
-        if (!string.IsNullOrWhiteSpace(firstName))
-            clients = clients.Where(c => c.Key.FirstName.Contains(firstName));
+        if (client is null) return;
         
-        if (!string.IsNullOrWhiteSpace(lastName))
-            clients = clients.Where(c => c.Key.LastName.Contains(lastName));
-
-        if (!string.IsNullOrWhiteSpace(phoneNumber))
-            clients = clients.Where(c => c.Key.PhoneNumber.Contains(phoneNumber));
-        
-        if (!string.IsNullOrWhiteSpace(passportNumber))
-            clients = clients.Where(c => c.Key.PassportNumber.Contains(passportNumber));
-
-        if (startDate.HasValue)
-            clients = clients.Where(c => c.Key.BirthDay >= startDate.Value);
-
-        if (endDate.HasValue)
-            clients = clients.Where(c => c.Key.BirthDay <= endDate.Value);
-
-        return clients.ToDictionary();
+        client.FirstName = item.FirstName;
+        client.LastName = item.LastName;
+        client.PhoneNumber = item.PhoneNumber;
+        client.BankAccountNumber = item.BankAccountNumber;
+        client.Email = item.Email;
+        client.BirthDay = item.BirthDay;
+    }
+    
+    public void Delete(Client item)
+    {
+        _clients.Remove(item);
     }
     
     public Client GetYoungestClient()
@@ -77,11 +73,52 @@ public class ClientStorage
 
     public Client GetOldestClient()
     {
-       return _clients.Keys.MaxBy(c=>c.Age);
+        return _clients.Keys.MaxBy(c=>c.Age);
     }
 
     public double GetAverageClientAge()
     {
         return _clients.Keys.Average(c=> c.Age);
+    }
+    
+    public void AddAccount(Client client, Account account)
+    {
+        var accounts = _clients[client];
+        
+        if (accounts is null) return; 
+        
+        accounts.Add(account);
+    }
+    
+    private static Account GetDefaultAccount()
+    {
+        return new Account
+        {
+            Currency = new Currency("$", "United States dollar", "USD"),
+            Amount = 0
+        };
+    }
+
+    public void UpdateAccount(Client client, Account account)
+    { 
+        var accounts = _clients[client];
+        
+        if (accounts is null) return;
+        
+        var clientAccount = accounts.FirstOrDefault(a=> a.Currency.Equals(account.Currency));
+        
+        if (clientAccount is null) return;
+        
+        clientAccount.Currency = account.Currency;
+        clientAccount.Amount = account.Amount;
+    }
+
+    public void DeleteAccount(Client client, Account account)
+    {
+        var accounts = _clients[client];
+        
+        if (accounts is null) return;
+        
+        var clientAccount = accounts.Remove(account);
     }
 }
