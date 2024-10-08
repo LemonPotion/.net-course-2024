@@ -7,7 +7,7 @@ namespace BankSystem.App.Services;
 
 public class EmployeeService
 {
-     private readonly IEmployeeStorage _employeeStorage;
+    private readonly IEmployeeStorage _employeeStorage;
 
     public EmployeeService(IEmployeeStorage employeeStorage)
     {
@@ -46,7 +46,8 @@ public class EmployeeService
         }
         else if (employee.Age < 18)
             throw new AgeRestrictionException(nameof(employee));
-        else  if (employee.FirstName is null || employee.LastName is null || employee.BirthDay == DateTime.MinValue || employee.PassportNumber is null)
+        else if (employee.FirstName is null || employee.LastName is null || employee.BirthDay == DateTime.MinValue ||
+                 employee.PassportNumber is null)
         {
             throw new PassportDataMissingException(nameof(employee));
         }

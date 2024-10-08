@@ -7,7 +7,7 @@ namespace BankSystem.Data.Tests;
 
 public class EmployeeStorageTests
 {
-   [Fact]
+    [Fact]
     public void EmployeeStorageAddEmployeeToStorageShouldAddSuccessfully()
     {
         //Arrange

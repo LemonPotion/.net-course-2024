@@ -4,5 +4,4 @@ namespace BankSystem.App.Interfaces;
 
 public interface IEmployeeStorage : IStorage<Employee>
 {
-    
 }

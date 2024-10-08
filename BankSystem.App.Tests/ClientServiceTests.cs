@@ -69,7 +69,8 @@ public class ClientServiceTests
         client.Should().BeEquivalentTo(updatedClient);
     }
     
-    [Fact] public void ClientServiceDeleteClientShouldDeleteClient()
+    [Fact] 
+    public void ClientServiceDeleteClientShouldDeleteClient()
     {
         //Arrange
         var testDataGenerator = new TestDataGenerator();

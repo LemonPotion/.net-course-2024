@@ -30,7 +30,7 @@ public class EmployeeStorage : IEmployeeStorage
 
     public void Update(Employee item)
     {
-        var employee = _employees.FirstOrDefault(e=> e.PassportNumber == item.PassportNumber);
+        var employee = _employees.FirstOrDefault(e => e.PassportNumber == item.PassportNumber);
 
         if (employee is null) return;
         

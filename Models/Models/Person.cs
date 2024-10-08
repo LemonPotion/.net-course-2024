@@ -1,5 +1,4 @@
-﻿
-namespace BankSystem.Domain.Models;
+﻿namespace BankSystem.Domain.Models;
 
 public class Person
 {
@@ -38,5 +37,4 @@ public class Person
     {
         return PassportNumber.GetHashCode();
     }
-    
 }

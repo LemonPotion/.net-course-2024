@@ -34,7 +34,7 @@ public class BankService
         return _blackList.Contains(person);
     }
     
-    public decimal CalculateBankOwnersSalary(decimal bankProfit,decimal expenses, int numberOfOwners)
+    public decimal CalculateBankOwnersSalary(decimal bankProfit, decimal expenses, int numberOfOwners)
     {
         return (bankProfit - expenses) / numberOfOwners;
     }
@@ -51,5 +51,4 @@ public class BankService
             PassportNumber = client.PassportNumber
         };
     }
-    
 }

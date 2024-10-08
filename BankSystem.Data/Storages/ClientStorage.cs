@@ -5,8 +5,8 @@ namespace BankSystem.Data.Storages;
 
 public class ClientStorage : IClientStorage
 {
-    private readonly Dictionary<Client,List<Account>> _clients;
-    public Dictionary<Client,List<Account>> Clients => _clients;
+    private readonly Dictionary<Client, List<Account>> _clients;
+    public Dictionary<Client, List<Account>> Clients => _clients;
 
     public ClientStorage()
     {
@@ -21,8 +21,8 @@ public class ClientStorage : IClientStorage
         };
         _clients.Add(item, accounts);
     }
-    
-    public void AddRange(Dictionary<Client,List<Account>> clientAccountDictionary)
+
+    public void AddRange(Dictionary<Client, List<Account>> clientAccountDictionary)
     {
         foreach (var item in clientAccountDictionary)
         {
@@ -49,7 +49,7 @@ public class ClientStorage : IClientStorage
     
     public void Update(Client item)
     {
-        var client = _clients.Keys.FirstOrDefault(c=> c.PassportNumber == item.PassportNumber);
+        var client = _clients.Keys.FirstOrDefault(c => c.PassportNumber == item.PassportNumber);
 
         if (client is null) return;
         
@@ -68,19 +68,19 @@ public class ClientStorage : IClientStorage
     
     public Client GetYoungestClient()
     {
-        return _clients.Keys.MinBy(c=> c.Age);
+        return _clients.Keys.MinBy(c => c.Age);
     }
 
     public Client GetOldestClient()
     {
-        return _clients.Keys.MaxBy(c=>c.Age);
+        return _clients.Keys.MaxBy(c => c.Age);
     }
 
     public double GetAverageClientAge()
     {
-        return _clients.Keys.Average(c=> c.Age);
+        return _clients.Keys.Average(c => c.Age);
     }
-    
+
     public void AddAccount(Client client, Account account)
     {
         var accounts = _clients[client];
@@ -104,9 +104,9 @@ public class ClientStorage : IClientStorage
         var accounts = _clients[client];
         
         if (accounts is null) return;
-        
-        var clientAccount = accounts.FirstOrDefault(a=> a.Currency.Equals(account.Currency));
-        
+
+        var clientAccount = accounts.FirstOrDefault(a => a.Currency.Equals(account.Currency));
+
         if (clientAccount is null) return;
         
         clientAccount.Currency = account.Currency;
