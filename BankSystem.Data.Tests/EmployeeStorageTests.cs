@@ -19,7 +19,7 @@ public class EmployeeStorageTests
         storage.AddRange(employees);
         
         //Assert
-        storage.Employees.Should().BeEquivalentTo(employees);
+        storage.Get(1, employees.Count, null).Should().BeEquivalentTo(employees);
     }
 
     [Fact]

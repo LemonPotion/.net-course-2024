@@ -7,9 +7,9 @@ namespace BankSystem.App.Services;
 
 public class EmployeeService
 {
-    private readonly IEmployeeStorage _employeeStorage;
+    private readonly IStorage<Employee> _employeeStorage;
 
-    public EmployeeService(IEmployeeStorage employeeStorage)
+    public EmployeeService(IStorage<Employee> employeeStorage)
     {
         _employeeStorage = employeeStorage;
     }
@@ -33,9 +33,9 @@ public class EmployeeService
         _employeeStorage.Delete(employee);
     }
 
-    public IEnumerable<Employee> GetPaged(int pageNumber, int pageSize)
+    public IEnumerable<Employee> GetPaged(int pageNumber, int pageSize, Func<Employee, bool>? filter)
     {
-        return _employeeStorage.Get(pageNumber, pageSize);
+        return _employeeStorage.Get(pageNumber, pageSize, filter);
     }
     
     private static void ValidateEmployee(Employee employee)

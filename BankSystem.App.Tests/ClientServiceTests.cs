@@ -22,7 +22,7 @@ public class ClientServiceTests
         clientService.Add(client);
 
         //Assert
-        clientStorage.Clients.Keys.Should().Contain(client);
+        clientStorage.Get(1, clients.Count, null).Should().Contain(client);
     }
     
     [Fact]
@@ -41,7 +41,7 @@ public class ClientServiceTests
         }
 
         //Act
-        var filteredClients = clientService.GetPaged(1, 10);
+        var filteredClients = clientService.GetPaged(1, clients.Count, null);
 
         //Assert
         filteredClients.Should().NotBeNull();
@@ -86,7 +86,7 @@ public class ClientServiceTests
         clientService.Delete(client);
         
         //Assert
-        clientStorage.Clients.Keys.Should().NotContain(client);
+        clientStorage.Get(1, clients.Count, null).Should().NotContain(client);
     }
     
     [Fact]
@@ -98,7 +98,8 @@ public class ClientServiceTests
         var clientService = new ClientService(clientStorage);
         
         var client = testDataGenerator.GenerateClients().First();
-        var account = testDataGenerator.GenerateAccounts().First();
+        var accounts = testDataGenerator.GenerateAccounts();
+        var account = accounts.First(); 
         
         clientService.Add(client);
        
@@ -106,7 +107,7 @@ public class ClientServiceTests
         clientService.AddAccount(client, account);
         
         //Assert
-        clientStorage.Clients[client].Should().Contain(account);
+        clientStorage.GetAccounts(client,1,accounts.Count, null).Should().Contain(account);
     }
     
     [Fact]
@@ -142,7 +143,8 @@ public class ClientServiceTests
         var clientService = new ClientService(clientStorage);
         
         var client = testDataGenerator.GenerateClients().First();
-        var account = testDataGenerator.GenerateAccounts().First();
+        var accounts = testDataGenerator.GenerateAccounts();
+        var account = accounts.First();
         
         clientService.Add(client);
         clientService.AddAccount(client, account);
@@ -151,6 +153,6 @@ public class ClientServiceTests
         clientService.DeleteAccount(client, account);
         
         //Assert
-        clientStorage.Clients[client].Should().NotContain(account);
+        clientStorage.GetAccounts(client,1,accounts.Count, null).Should().NotContain(account);
     }
 }

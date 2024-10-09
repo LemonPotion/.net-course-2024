@@ -21,9 +21,14 @@ public class ClientService
         _clientStorage.Add(client);
     }
     
-    public List<Client> GetPaged(int pageNumber, int pageSize)
+    public List<Client> GetPaged(int pageNumber, int pageSize, Func<Client, bool>? filter)
     {
-        return _clientStorage.Get(pageNumber, pageSize);
+        return _clientStorage.Get(pageNumber, pageSize, filter);
+    }
+    
+    public List<Account> GetAccountsPaged(int pageNumber, int pageSize, Client client, Func<Account, bool>? filter)
+    {
+        return _clientStorage.GetAccounts(client, pageNumber, pageSize, filter);
     }
 
     public void Update(Client client)

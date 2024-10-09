@@ -21,7 +21,7 @@ public class EmployeeServiceTests
         employeeService.Add(employees.First());
 
         //Assert
-        employeeStorage.Employees.Should().NotBeNull();
+        employeeStorage.Get(1, employees.Count, null).Should().NotBeNull();
     }
     
     [Fact]
@@ -39,7 +39,7 @@ public class EmployeeServiceTests
         }
 
         //Act
-        var filteredEmployees = employeeService.GetPaged(1, 10);
+        var filteredEmployees = employeeService.GetPaged(1, 10, null);
 
         //Assert
         filteredEmployees.Should().NotBeNull();
@@ -75,13 +75,14 @@ public class EmployeeServiceTests
         var employeeStorage = new EmployeeStorage();
         var employeeService = new EmployeeService(employeeStorage);
         
-        var employee = testDataGenerator.GenerateEmployees().First();
+        var employees = testDataGenerator.GenerateEmployees();
+        var employee = employees.First();
         employeeService.Add(employee);
         
         //Act
         employeeService.Delete(employee);
         
         //Assert
-        employeeStorage.Employees.Should().NotContain(employee);
+        employeeStorage.Get(1, employees.Count, null).Should().NotContain(employee);
     }
 }

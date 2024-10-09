@@ -6,7 +6,6 @@ namespace BankSystem.Data.Storages;
 public class ClientStorage : IClientStorage
 {
     private readonly Dictionary<Client, List<Account>> _clients;
-    public Dictionary<Client, List<Account>> Clients => _clients;
 
     public ClientStorage()
     {
@@ -37,14 +36,18 @@ public class ClientStorage : IClientStorage
         }
     }
     
-    public List<Client> Get(int pageNumber, int pageSize)
+    public List<Client> Get(int pageNumber, int pageSize, Func<Client, bool>? filter)
     {
-        var items = _clients.Keys
+        var items = _clients.Keys.AsEnumerable();
+        if (filter is not null)
+        {
+            items = items.Where(filter);
+        }
+        
+        return items
             .Skip((pageNumber - 1) * pageSize) 
             .Take(pageSize)
             .ToList();
-
-        return items;
     }
     
     public void Update(Client item)
@@ -88,6 +91,19 @@ public class ClientStorage : IClientStorage
         if (accounts is null) return; 
         
         accounts.Add(account);
+    }
+    
+    public List<Account> GetAccounts(Client client, int pageNumber, int pageSize, Func<Account, bool>? filter)
+    {
+        var accounts = _clients[client].AsEnumerable();
+        if (filter is not null)
+        {
+            accounts = accounts.Where(filter);
+        }
+        return accounts
+            .Skip((pageNumber - 1) * pageSize) 
+            .Take(pageSize)
+            .ToList();
     }
     
     private static Account GetDefaultAccount()

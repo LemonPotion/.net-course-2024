@@ -3,10 +3,9 @@ using BankSystem.Domain.Models;
 
 namespace BankSystem.Data.Storages;
 
-public class EmployeeStorage : IEmployeeStorage
+public class EmployeeStorage : IStorage<Employee>
 {
     private readonly List<Employee> _employees;
-    public IEnumerable<Employee> Employees => _employees;
 
     public void Add(Employee item)
     {
@@ -18,14 +17,18 @@ public class EmployeeStorage : IEmployeeStorage
         _employees.AddRange(employees);
     }
     
-    public List<Employee> Get(int pageNumber, int pageSize)
+    public List<Employee> Get(int pageNumber, int pageSize, Func<Employee, bool>? filter)
     {
-        var items = _employees
+       var items = _employees.AsEnumerable();
+        if (filter is not null)
+        {
+            items = items.Where(filter);
+        }
+        
+        return items
             .Skip((pageNumber - 1) * pageSize) 
             .Take(pageSize)
             .ToList();
-
-        return items;
     }
 
     public void Update(Employee item)

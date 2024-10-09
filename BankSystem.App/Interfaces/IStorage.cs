@@ -2,7 +2,7 @@
 
 public interface IStorage<T>
 {
-    public List<T> Get(int pageNumber, int pageSize);
+    public List<T> Get(int pageNumber, int pageSize, Func<T, bool>? filter);
     
     public void Add(T item);
     
