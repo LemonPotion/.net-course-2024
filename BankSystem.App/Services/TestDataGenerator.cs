@@ -23,10 +23,11 @@ public class TestDataGenerator
             };
             clients.Add(client);
         }
+
         return clients;
     }
-    
-    public Dictionary<string,Client> GenerateClientsDictionary()
+
+    public Dictionary<string, Client> GenerateClientsDictionary()
     {
         var clients = new Dictionary<string, Client>();
         for (var i = 0; i < 1000; i++)
@@ -41,8 +42,9 @@ public class TestDataGenerator
                 PhoneNumber = _faker.Phone.PhoneNumber(),
                 PassportNumber = _faker.Random.Int().ToString()
             };
-            clients.Add(client.PhoneNumber,client);
+            clients.Add(client.PhoneNumber, client);
         }
+
         return clients;
     }
     
@@ -64,8 +66,10 @@ public class TestDataGenerator
             };
             employees.Add(employee);
         }
+
         return employees;
     }
+
     public Dictionary<Client, Account> GenerateClientAccount()
     {
         var dictionary = new Dictionary<Client, Account>();
@@ -90,11 +94,12 @@ public class TestDataGenerator
                     _faker.Finance.Currency().Description, 
                     _faker.Finance.Currency().Symbol)
             };
-            dictionary.Add(client,account);
+            dictionary.Add(client, account);
         }
+
         return dictionary;
     }
-    
+
     public Dictionary<Client, List<Account>> GenerateClientAccounts()
     {
         var dictionary = new Dictionary<Client, List<Account>>();
@@ -124,8 +129,10 @@ public class TestDataGenerator
                 };
                 accounts.Add(account);
             }
-            dictionary.Add(client,accounts);
+
+            dictionary.Add(client, accounts);
         }
+
         return dictionary;
     }
     

@@ -1,66 +1,59 @@
-﻿using BankSystem.Domain.Models;
+﻿using BankSystem.App.Interfaces;
+using BankSystem.Domain.Models;
 
 namespace BankSystem.Data.Storages;
 
-public class EmployeeStorage
+public class EmployeeStorage : IStorage<Employee>
 {
     private readonly List<Employee> _employees;
-    public IEnumerable<Employee> Employees => _employees;
 
-    public EmployeeStorage()
+    public void Add(Employee item)
     {
-        _employees = new List<Employee>();
-    }
-
-    public void AddEmployee(Employee employee)
-    {
-        _employees.Add(employee);
+        _employees.Add(item);
     }
     
     public void AddRange(IEnumerable<Employee> employees)
     {
         _employees.AddRange(employees);
     }
-
-    public void UpdateEmployee(Employee employee, Employee updatedEmployee)
+    
+    public List<Employee> Get(int pageNumber, int pageSize, Func<Employee, bool>? filter)
     {
-        var originalEmployee = _employees.FirstOrDefault(e=> e.Equals(employee));
-
-        if (originalEmployee is null) return;
+       var items = _employees.AsEnumerable();
+        if (filter is not null)
+        {
+            items = items.Where(filter);
+        }
         
-        originalEmployee.FirstName = updatedEmployee.FirstName;
-        originalEmployee.LastName = updatedEmployee.LastName;
-        originalEmployee.Contract = updatedEmployee.Contract;
-        originalEmployee.BirthDay = updatedEmployee.BirthDay;
-        originalEmployee.Salary = updatedEmployee.Salary;
-        originalEmployee.Email = updatedEmployee.Email;
-        originalEmployee.PassportNumber = updatedEmployee.PassportNumber;
-        originalEmployee.PhoneNumber = updatedEmployee.PhoneNumber;
+        return items
+            .Skip((pageNumber - 1) * pageSize) 
+            .Take(pageSize)
+            .ToList();
+    }
+
+    public void Update(Employee item)
+    {
+        var employee = _employees.FirstOrDefault(e => e.PassportNumber == item.PassportNumber);
+
+        if (employee is null) return;
+        
+        employee.FirstName = item.FirstName;
+        employee.LastName = item.LastName;
+        employee.PhoneNumber = item.PhoneNumber;
+        employee.Contract = item.Contract;
+        employee.BirthDay = item.BirthDay;
+        employee.Salary = item.Salary;
+        employee.Email = item.Email;
+    }
+
+    public void Delete(Employee item)
+    {
+        _employees.Remove(item);
     }
     
-    public IEnumerable<Employee> GetFilteredEmployees(string? firstName, string? lastName, string? phoneNumber, string? passportNumber, DateTime? startDate, DateTime? endDate)
+    public EmployeeStorage()
     {
-        var employees = _employees.AsQueryable();
-
-        if (!string.IsNullOrWhiteSpace(firstName))
-            employees = employees.Where(c => c.FirstName.Contains(firstName));
-        
-        if (!string.IsNullOrWhiteSpace(lastName))
-            employees = employees.Where(c => c.LastName.Contains(lastName));
-
-        if (!string.IsNullOrWhiteSpace(phoneNumber))
-            employees = employees.Where(c => c.PhoneNumber.Contains(phoneNumber));
-        
-        if (!string.IsNullOrWhiteSpace(passportNumber))
-            employees = employees.Where(c => c.PassportNumber.Contains(passportNumber));
-
-        if (startDate.HasValue)
-            employees = employees.Where(c => c.BirthDay >= startDate.Value);
-
-        if (endDate.HasValue)
-            employees = employees.Where(c => c.BirthDay <= endDate.Value);
-
-        return employees;
+        _employees = new List<Employee>();
     }
     
     public Employee GetYoungestEmployee()

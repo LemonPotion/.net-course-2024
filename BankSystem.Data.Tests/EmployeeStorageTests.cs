@@ -7,7 +7,7 @@ namespace BankSystem.Data.Tests;
 
 public class EmployeeStorageTests
 {
-   [Fact]
+    [Fact]
     public void EmployeeStorageAddEmployeeToStorageShouldAddSuccessfully()
     {
         //Arrange
@@ -19,7 +19,7 @@ public class EmployeeStorageTests
         storage.AddRange(employees);
         
         //Assert
-        storage.Employees.Should().BeEquivalentTo(employees);
+        storage.Get(1, employees.Count, null).Should().BeEquivalentTo(employees);
     }
 
     [Fact]

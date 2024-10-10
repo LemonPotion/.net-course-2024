@@ -19,7 +19,7 @@ public class ClientStorageTests
         storage.AddRange(clients);
         
         //Assert
-        storage.Clients.Should().BeEquivalentTo(clients);
+        storage.Get(1, clients.Count, null).Should().BeEquivalentTo(clients.Keys);
     }
 
     [Fact]

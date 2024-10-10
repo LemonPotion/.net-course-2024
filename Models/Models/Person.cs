@@ -1,5 +1,4 @@
-﻿
-namespace BankSystem.Domain.Models;
+﻿namespace BankSystem.Domain.Models;
 
 public class Person
 {
@@ -36,7 +35,6 @@ public class Person
 
     public override int GetHashCode()
     {
-        return FirstName.GetHashCode() + LastName.GetHashCode() + BirthDay.GetHashCode() + PassportNumber.GetHashCode();
+        return PassportNumber.GetHashCode();
     }
-    
 }
