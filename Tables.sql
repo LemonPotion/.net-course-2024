@@ -1,6 +1,4 @@
-﻿CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
-CREATE TABLE employees (
+﻿CREATE TABLE employees (
     employee_id uuid PRIMARY KEY,
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
