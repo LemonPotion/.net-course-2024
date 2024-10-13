@@ -30,7 +30,7 @@ ORDER BY a.amount ASC;
 --в
 SELECT c.client_id, c.first_name, c.last_name
 FROM clients c
-         JOIN accounts a ON c.client_id = a.client_id
+    JOIN accounts a ON c.client_id = a.client_id
 WHERE a.amount = (SELECT MIN(amount) FROM accounts)
 ORDER BY a.amount;
 
