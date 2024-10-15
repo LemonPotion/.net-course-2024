@@ -35,7 +35,7 @@ public class ClientServiceTests
         _clientService.Add(client);
 
         //Assert
-        _clientStorage.Get(1, clients.Count, null).Should().Contain(client);
+        _bankSystemContext.Clients.Find(client.Id).Should().NotBeNull();
     }
 
     [Fact]
