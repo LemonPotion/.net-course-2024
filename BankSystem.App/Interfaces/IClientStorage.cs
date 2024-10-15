@@ -12,5 +12,5 @@ public interface IClientStorage : IStorage<Client>
 
     public Account GetAccountById(Guid accountId);
 
-    public List<Account> GetAccounts(Client client, int pageNumber, int pageSize, Func<Account,bool>? filter);
+    public List<Account> GetAccounts(int pageNumber, int pageSize, Func<Account,bool>? filter);
 }

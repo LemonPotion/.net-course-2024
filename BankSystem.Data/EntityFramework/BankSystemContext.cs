@@ -7,9 +7,9 @@ namespace BankSystem.Data.EntityFramework;
 public class BankSystemContext : DbContext
 {
     public DbSet<Client> Clients => Set<Client>();
-    
+
     public DbSet<Account> Accounts => Set<Account>();
-    
+
     public DbSet<Employee> Employees => Set<Employee>();
 
     public DbSet<Currency> Currencies => Set<Currency>();

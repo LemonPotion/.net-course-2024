@@ -13,12 +13,6 @@ public class CurrencyConfiguration : IEntityTypeConfiguration<Currency>
         builder.HasKey(c => c.Id)
             .HasName("currency_id");
 
-        builder.HasIndex(c => c.Code)
-            .IsUnique();
-
-        builder.HasIndex(c => c.Name)
-            .IsUnique();
-
         builder.Property(c => c.Code)
             .IsRequired()
             .HasMaxLength(3)

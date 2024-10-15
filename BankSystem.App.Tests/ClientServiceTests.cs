@@ -2,6 +2,7 @@
 using BankSystem.App.Services;
 using BankSystem.Data.EntityFramework;
 using BankSystem.Data.Storages;
+using BankSystem.Domain.Models;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -63,9 +64,9 @@ public class ClientServiceTests
         var clients = _testDataGenerator.GenerateClients();
         var client = clients.First();
         var updatedClient = clients.Last();
-        updatedClient.PassportNumber = client.PassportNumber;
         
         _clientService.Add(client);
+        updatedClient.Id = client.Id;
         
         //Act
         _clientService.Update(updatedClient);
@@ -94,37 +95,43 @@ public class ClientServiceTests
     public void ClientServiceAddClientAccountShouldAddAccount()
     {
         //Arrange
-        var client = _testDataGenerator.GenerateClients().First();
-        var accounts = _testDataGenerator.GenerateAccounts();
-        var account = accounts.First();
+        var client = _testDataGenerator.GenerateClients(1).First();
+        var account = _testDataGenerator.GenerateAccounts(1).First();
         
         _clientService.Add(client);
+        account.ClientId = client.Id;
        
         //Act
         _clientService.AddAccount(account);
-        
+        var a = _bankSystemContext.Accounts.Find(account.Id);
         //Assert
-        _clientStorage.GetAccounts(client,1,accounts.Count, null).Should().Contain(account);
+        _bankSystemContext.Accounts.Find(account.Id).Should().BeEquivalentTo(account, options => options
+            .Excluding(a => a.Currency)
+            .Excluding(a=> a.Client));
     }
     
     [Fact]
     public void ClientServiceUpdateClientAccountShouldUpdateAccount()
     {
         //Arrange
-        var client = _testDataGenerator.GenerateClients().First();
-        var accounts = _testDataGenerator.GenerateAccounts();
-        var account = accounts.First();
-        var updatedAccount = accounts.Last();
-        updatedAccount.Currency = account.Currency;
+        var client = _testDataGenerator.GenerateClients(1).First();
+        var account = _testDataGenerator.GenerateAccounts(1).First();
+        var updatedAccount = _testDataGenerator.GenerateAccounts(1).First();
         
         _clientService.Add(client);
+        account.ClientId = client.Id;
         _clientService.AddAccount(account);
-        
+        updatedAccount.Id = account.Id;
         //Act
         _clientService.UpdateAccount(updatedAccount);
         
         //Assert
-        account.Should().BeEquivalentTo(updatedAccount);
+        _bankSystemContext.Find<Account>(account.Id).Should().BeEquivalentTo(updatedAccount, options => options
+            .Excluding(a => a.Currency)
+            .Excluding(a=> a.Client)
+            .Excluding(a=> a.ClientId)
+            .Excluding(a=> a.CurrencyId)
+            .Excluding(a=> a.Id));
     }
     
     [Fact]
@@ -136,12 +143,13 @@ public class ClientServiceTests
         var account = accounts.First();
         
         _clientService.Add(client);
+        account.ClientId = client.Id;
         _clientService.AddAccount(account);
         
         //Act
         _clientService.DeleteAccount(account.Id);
         
         //Assert
-        _clientStorage.GetAccounts(client,1,accounts.Count, null).Should().NotContain(account);
+        _clientStorage.GetAccounts(1,accounts.Count, null).Should().NotContain(account);
     }
 }

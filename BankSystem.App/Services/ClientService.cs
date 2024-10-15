@@ -57,7 +57,7 @@ public class ClientService
     {
         var client = GetById(clientId);
         ValidateClient(client);
-        return _clientStorage.GetAccounts(client, pageNumber, pageSize, filter);
+        return _clientStorage.GetAccounts(pageNumber, pageSize, filter);
     }
     
     public void UpdateAccount(Account account)

@@ -10,10 +10,10 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
     public void Configure(EntityTypeBuilder<Account> builder)
     {
         builder.ToTable("accounts");
-        
+
         builder.HasKey(a => a.Id)
             .HasName("account_id");
-        
+
         builder.Property(a => a.Amount)
             .HasColumnName("amount")
             .IsRequired();

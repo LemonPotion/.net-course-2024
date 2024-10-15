@@ -126,12 +126,6 @@ namespace BankSystem.Data.Migrations
                     b.HasKey("Id")
                         .HasName("currency_id");
 
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.ToTable("currencies", (string)null);
                 });
 
