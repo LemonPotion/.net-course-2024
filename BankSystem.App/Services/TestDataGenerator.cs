@@ -6,9 +6,9 @@ namespace BankSystem.App.Services;
 public class TestDataGenerator
 {
     private readonly Faker _faker = new Faker();
-    
+
     private readonly Faker<Employee> _employeeFaker = new Faker<Employee>()
-        .RuleFor(e => e.BirthDay, f => f.Date.Past(60, DateTime.Now.AddYears(-18)).ToUniversalTime())  
+        .RuleFor(e => e.BirthDay, f => f.Date.Past(60, DateTime.Now.AddYears(-18)).ToUniversalTime())
         .RuleFor(e => e.Contract, f => f.Lorem.Sentence())
         .RuleFor(e => e.Email, f => f.Internet.Email())
         .RuleFor(e => e.FirstName, f => f.Name.FirstName())
@@ -17,12 +17,12 @@ public class TestDataGenerator
         .RuleFor(e => e.PassportNumber, f => f.Random.Guid().ToString())
         .RuleFor(e => e.Salary, f => f.Random.Decimal())
         .RuleFor(e => e.Contract, f => f.Lorem.Text());
-    
+
     private readonly Faker<Account> _accountFaker = new Faker<Account>()
-        .RuleFor(a => a.Currency, f => 
+        .RuleFor(a => a.Currency, f =>
             new Currency(
-                f.Finance.Currency().Code, 
-                f.Finance.Currency().Description, 
+                f.Finance.Currency().Code,
+                f.Finance.Currency().Description,
                 f.Finance.Currency().Symbol))
         .RuleFor(a => a.Amount, f => f.Random.Int());
 
@@ -58,7 +58,7 @@ public class TestDataGenerator
 
         return clients;
     }
-    
+
     public List<Employee> GenerateEmployees(int count = 1000)
     {
         var employees = new List<Employee>();
@@ -82,8 +82,8 @@ public class TestDataGenerator
             {
                 Amount = _faker.Random.Int(),
                 Currency = new Currency(
-                    _faker.Finance.Currency().Code, 
-                    _faker.Finance.Currency().Description, 
+                    _faker.Finance.Currency().Code,
+                    _faker.Finance.Currency().Description,
                     _faker.Finance.Currency().Symbol)
             };
             dictionary.Add(client, account);
@@ -98,7 +98,7 @@ public class TestDataGenerator
         for (var i = 0; i < count; i++)
         {
             var client = _clientFaker.Generate();
-            
+
             var accounts = new List<Account>();
             for (var j = 0; j < 10; j++)
             {
@@ -106,8 +106,8 @@ public class TestDataGenerator
                 {
                     Amount = _faker.Random.Int(),
                     Currency = new Currency(
-                        _faker.Finance.Currency().Code, 
-                        _faker.Finance.Currency().Description, 
+                        _faker.Finance.Currency().Code,
+                        _faker.Finance.Currency().Description,
                         _faker.Finance.Currency().Symbol)
                 };
                 accounts.Add(account);
@@ -118,9 +118,9 @@ public class TestDataGenerator
 
         return dictionary;
     }
-    
+
     public List<Account> GenerateAccounts(int count = 1000)
-    { 
+    {
         return _accountFaker.Generate(count);
     }
 }

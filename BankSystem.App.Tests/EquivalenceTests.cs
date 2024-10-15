@@ -25,14 +25,14 @@ public class EquivalenceTests
             PhoneNumber = key.PhoneNumber,
             PassportNumber = key.PassportNumber
         };
-        
+
         //Act
         var account = clientAccountDictionary[client];
 
         //Assert
         account.Should().BeEquivalentTo(value);
     }
-    
+
     [Fact]
     public void ClientAccountsContainsEquivalentClientReturnsExpectedAccount()
     {
@@ -51,7 +51,7 @@ public class EquivalenceTests
             PhoneNumber = key.PhoneNumber,
             PassportNumber = key.PassportNumber
         };
-        
+
         //Act
         var account = clientAccounts[client];
 
@@ -77,7 +77,7 @@ public class EquivalenceTests
             Salary = employee.Salary,
             PassportNumber = employee.PassportNumber
         };
-        
+
         //Act
         var containsEmployee = employees.Contains(newEmployee);
 

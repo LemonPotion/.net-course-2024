@@ -19,7 +19,7 @@ public class ClientService
 
         _clientStorage.Add(client);
     }
-    
+
     public List<Client> GetPaged(int pageNumber, int pageSize, Func<Client, bool>? filter)
     {
         return _clientStorage.Get(pageNumber, pageSize, filter);
@@ -41,7 +41,7 @@ public class ClientService
         ValidateClient(GetById(id));
         _clientStorage.Delete(id);
     }
-    
+
     public void AddAccount(Account account)
     {
         ValidateClient(GetById(account.ClientId));
@@ -52,14 +52,14 @@ public class ClientService
     {
         return _clientStorage.GetAccountById(id);
     }
-    
+
     public List<Account> GetAccountsPaged(int pageNumber, int pageSize, Guid clientId, Func<Account, bool>? filter)
     {
         var client = GetById(clientId);
         ValidateClient(client);
         return _clientStorage.GetAccounts(pageNumber, pageSize, filter);
     }
-    
+
     public void UpdateAccount(Account account)
     {
         _clientStorage.UpdateAccount(account);
@@ -69,7 +69,7 @@ public class ClientService
     {
         _clientStorage.DeleteAccount(id);
     }
-    
+
     private static void ValidateClient(Client client)
     {
         if (client is null)
@@ -78,7 +78,8 @@ public class ClientService
         }
         else if (client.Age < 18)
             throw new AgeRestrictionException(nameof(client));
-        else  if (client.FirstName is null || client.LastName is null || client.BirthDay == DateTime.MinValue || client.PassportNumber is null)
+        else if (client.FirstName is null || client.LastName is null || client.BirthDay == DateTime.MinValue ||
+                 client.PassportNumber is null)
         {
             throw new PassportDataMissingException(nameof(client));
         }

@@ -24,7 +24,7 @@ public class EmployeeService
     {
         return _employeeStorage.GetById(id);
     }
-    
+
     public IEnumerable<Employee> GetPaged(int pageNumber, int pageSize, Func<Employee, bool>? filter)
     {
         return _employeeStorage.Get(pageNumber, pageSize, filter);
@@ -40,7 +40,7 @@ public class EmployeeService
     {
         _employeeStorage.Delete(id);
     }
-    
+
     private static void ValidateEmployee(Employee employee)
     {
         if (employee is null)
