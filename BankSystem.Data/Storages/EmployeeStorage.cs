@@ -1,25 +1,34 @@
 ﻿using BankSystem.App.Interfaces;
+using BankSystem.Data.EntityFramework;
 using BankSystem.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BankSystem.Data.Storages;
 
 public class EmployeeStorage : IStorage<Employee>
 {
-    private readonly List<Employee> _employees;
+    private readonly BankSystemContext _bankSystemContext;
+
+    public EmployeeStorage(BankSystemContext bankSystemContext)
+    {
+        _bankSystemContext = bankSystemContext;
+    }
 
     public void Add(Employee item)
     {
-        _employees.Add(item);
+        _bankSystemContext.Set<Employee>().Add(item);
+
+        _bankSystemContext.SaveChanges();
     }
-    
-    public void AddRange(IEnumerable<Employee> employees)
+
+    public Employee GetById(Guid id)
     {
-        _employees.AddRange(employees);
+        return _bankSystemContext.Employees.Find(id);
     }
     
     public List<Employee> Get(int pageNumber, int pageSize, Func<Employee, bool>? filter)
     {
-       var items = _employees.AsEnumerable();
+       var items = _bankSystemContext.Employees.AsEnumerable();
         if (filter is not null)
         {
             items = items.Where(filter);
@@ -33,7 +42,7 @@ public class EmployeeStorage : IStorage<Employee>
 
     public void Update(Employee item)
     {
-        var employee = _employees.FirstOrDefault(e => e.PassportNumber == item.PassportNumber);
+        var employee = _bankSystemContext.Employees.Find(item.Id);
 
         if (employee is null) return;
         
@@ -44,30 +53,17 @@ public class EmployeeStorage : IStorage<Employee>
         employee.BirthDay = item.BirthDay;
         employee.Salary = item.Salary;
         employee.Email = item.Email;
+        
+        _bankSystemContext.SaveChanges();
     }
 
-    public void Delete(Employee item)
+    public void Delete(Guid id)
     {
-        _employees.Remove(item);
-    }
-    
-    public EmployeeStorage()
-    {
-        _employees = new List<Employee>();
-    }
-    
-    public Employee GetYoungestEmployee()
-    {
-        return _employees.MinBy(c => c.Age);
-    }
-
-    public Employee GetOldestEmployee()
-    {
-        return _employees.MaxBy(c => c.Age);
-    }
-
-    public double GetAverageEmployeeAge()
-    {
-        return _employees.Average(c => c.Age);
+        var employee = GetById(id);
+        
+        if (employee is null) return;
+        
+        _bankSystemContext.Employees.Remove(employee);
+        _bankSystemContext.SaveChanges();
     }
 }

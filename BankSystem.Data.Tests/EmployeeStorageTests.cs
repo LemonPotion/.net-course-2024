@@ -1,4 +1,5 @@
 ﻿using BankSystem.App.Services;
+using BankSystem.Data.EntityFramework;
 using BankSystem.Data.Storages;
 using FluentAssertions;
 using Xunit;
@@ -7,69 +8,15 @@ namespace BankSystem.Data.Tests;
 
 public class EmployeeStorageTests
 {
-    [Fact]
-    public void EmployeeStorageAddEmployeeToStorageShouldAddSuccessfully()
-    {
-        //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new EmployeeStorage();
-        var employees = dataGenerator.GenerateEmployees();
-        
-        //Act
-        storage.AddRange(employees);
-        
-        //Assert
-        storage.Get(1, employees.Count, null).Should().BeEquivalentTo(employees);
-    }
+    private readonly BankSystemContext _dbContext;
+    private readonly EmployeeStorage _employeeStorage;
+    private readonly TestDataGenerator _testDataGenerator;
 
-    [Fact]
-    public void EmployeeStorageGetYoungestEmployeeReturnsYoungestEmployee()
+    public EmployeeStorageTests()
     {
-        //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new EmployeeStorage();
-        var employees = dataGenerator.GenerateEmployees();
-        storage.AddRange(employees);
-        
-        //Act
-        var youngestEmployee = storage.GetYoungestEmployee();
-        var expectedYoungestEmployee = employees.MinBy(c => c.Age);
-        
-        //Assert
-        youngestEmployee.Should().BeEquivalentTo(expectedYoungestEmployee);
+        _dbContext = new BankSystemContext();
+        _employeeStorage = new EmployeeStorage(_dbContext);
+        _testDataGenerator = new TestDataGenerator();
     }
     
-    [Fact]
-    public void EmployeeStorageGetOldestEmployeeReturnsOldestEmployee()
-    {
-        //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new EmployeeStorage();
-        var employees = dataGenerator.GenerateEmployees();
-        storage.AddRange(employees);
-        
-        //Act
-        var oldestEmployee = storage.GetOldestEmployee();
-        var expectedOldestEmployee = employees.MaxBy(c => c.Age);
-        
-        //Assert
-        oldestEmployee.Should().BeEquivalentTo(expectedOldestEmployee);
-    }
-    
-    [Fact]
-    public void EmployeeStorageGetAverageEmployeeAgeReturnsAverageEmployeeAge()
-    {
-        //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new EmployeeStorage();
-        var employees = dataGenerator.GenerateEmployees();
-        storage.AddRange(employees);
-        
-        //Act
-        var averageAge = storage.GetAverageEmployeeAge();
-        var expectedAverageAge = employees.Average(c => c.Age);
-        
-        //Assert
-        averageAge.Should().Be(expectedAverageAge);
-    }
 }

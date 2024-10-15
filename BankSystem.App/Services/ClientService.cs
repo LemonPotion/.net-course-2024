@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using BankSystem.App.Exceptions;
+﻿using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 
@@ -25,10 +24,10 @@ public class ClientService
     {
         return _clientStorage.Get(pageNumber, pageSize, filter);
     }
-    
-    public List<Account> GetAccountsPaged(int pageNumber, int pageSize, Client client, Func<Account, bool>? filter)
+
+    public Client GetById(Guid id)
     {
-        return _clientStorage.GetAccounts(client, pageNumber, pageSize, filter);
+        return _clientStorage.GetById(id);
     }
 
     public void Update(Client client)
@@ -37,28 +36,38 @@ public class ClientService
         _clientStorage.Update(client);
     }
 
-    public void Delete(Client client)
+    public void Delete(Guid id)
     {
-        ValidateClient(client);
-        _clientStorage.Delete(client);
+        ValidateClient(GetById(id));
+        _clientStorage.Delete(id);
     }
     
-    public void AddAccount(Client client, Account account)
+    public void AddAccount(Account account)
     {
-        ValidateClient(client);
-        _clientStorage.AddAccount(client, account);
-    }
-    
-    public void UpdateAccount(Client client, Account account)
-    {
-        ValidateClient(client);
-        _clientStorage.UpdateAccount(client, account);
+        ValidateClient(GetById(account.ClientId));
+        _clientStorage.AddAccount(account);
     }
 
-    public void DeleteAccount(Client client, Account account)
+    public Account GetAccountById(Guid id)
     {
+        return _clientStorage.GetAccountById(id);
+    }
+    
+    public List<Account> GetAccountsPaged(int pageNumber, int pageSize, Guid clientId, Func<Account, bool>? filter)
+    {
+        var client = GetById(clientId);
         ValidateClient(client);
-        _clientStorage.DeleteAccount(client, account);
+        return _clientStorage.GetAccounts(client, pageNumber, pageSize, filter);
+    }
+    
+    public void UpdateAccount(Account account)
+    {
+        _clientStorage.UpdateAccount(account);
+    }
+
+    public void DeleteAccount(Guid id)
+    {
+        _clientStorage.DeleteAccount(id);
     }
     
     private static void ValidateClient(Client client)

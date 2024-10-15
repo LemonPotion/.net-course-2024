@@ -1,47 +1,56 @@
-﻿using BankSystem.App.Services;
+﻿using BankSystem.App.Interfaces;
+using BankSystem.App.Services;
+using BankSystem.Data.EntityFramework;
 using BankSystem.Data.Storages;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace BankSystem.App.Tests;
 
 public class ClientServiceTests
 {
+    
+    private readonly BankSystemContext _bankSystemContext;
+    private readonly ClientStorage _clientStorage;
+    private readonly ClientService _clientService;
+    private readonly TestDataGenerator _testDataGenerator;
+
+    public ClientServiceTests()
+    {
+        _bankSystemContext = new BankSystemContext();
+        _clientStorage = new ClientStorage(new BankSystemContext());
+        _clientService = new ClientService(_clientStorage);
+        _testDataGenerator = new TestDataGenerator();
+    }
+    
     [Fact]
     public void ClientServiceAddClientShouldAddClient()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var clientStorage = new ClientStorage();
-        var clientService = new ClientService(clientStorage);
-        
-        var clients = testDataGenerator.GenerateClients();
+        var clients = _testDataGenerator.GenerateClients();
         var client = clients.First();
         
         //Act
-        clientService.Add(client);
+        _clientService.Add(client);
 
         //Assert
-        clientStorage.Get(1, clients.Count, null).Should().Contain(client);
+        _clientStorage.Get(1, clients.Count, null).Should().Contain(client);
     }
     
     [Fact]
     public void ClientServiceGetPagedReturnsPagedClients()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var clientStorage = new ClientStorage();
-        var clientService = new ClientService(clientStorage);
-        
-        var clients = testDataGenerator.GenerateClients();
+        var clients = _testDataGenerator.GenerateClients();
 
         foreach (var item in clients)
         {
-            clientService.Add(item);
+            _clientService.Add(item);
         }
 
         //Act
-        var filteredClients = clientService.GetPaged(1, clients.Count, null);
+        var filteredClients = _clientService.GetPaged(1, clients.Count, null);
 
         //Assert
         filteredClients.Should().NotBeNull();
@@ -51,19 +60,15 @@ public class ClientServiceTests
     public void ClientServiceUpdateClientShouldUpdateClient()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var clientStorage = new ClientStorage();
-        var clientService = new ClientService(clientStorage);
-        
-        var clients = testDataGenerator.GenerateClients();
+        var clients = _testDataGenerator.GenerateClients();
         var client = clients.First();
         var updatedClient = clients.Last();
         updatedClient.PassportNumber = client.PassportNumber;
         
-        clientService.Add(client);
+        _clientService.Add(client);
         
         //Act
-        clientService.Update(updatedClient);
+        _clientService.Update(updatedClient);
         
         //Assert
         client.Should().BeEquivalentTo(updatedClient);
@@ -73,62 +78,50 @@ public class ClientServiceTests
     public void ClientServiceDeleteClientShouldDeleteClient()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var clientStorage = new ClientStorage();
-        var clientService = new ClientService(clientStorage);
-        
-        var clients = testDataGenerator.GenerateClients();
+        var clients = _testDataGenerator.GenerateClients();
         var client = clients.First();
         
-        clientService.Add(client);
+        _clientService.Add(client);
         
         //Act
-        clientService.Delete(client);
+        _clientService.Delete(client.Id);
         
         //Assert
-        clientStorage.Get(1, clients.Count, null).Should().NotContain(client);
+        _clientStorage.Get(1, clients.Count, null).Should().NotContain(client);
     }
     
     [Fact]
     public void ClientServiceAddClientAccountShouldAddAccount()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var clientStorage = new ClientStorage();
-        var clientService = new ClientService(clientStorage);
+        var client = _testDataGenerator.GenerateClients().First();
+        var accounts = _testDataGenerator.GenerateAccounts();
+        var account = accounts.First();
         
-        var client = testDataGenerator.GenerateClients().First();
-        var accounts = testDataGenerator.GenerateAccounts();
-        var account = accounts.First(); 
-        
-        clientService.Add(client);
+        _clientService.Add(client);
        
         //Act
-        clientService.AddAccount(client, account);
+        _clientService.AddAccount(account);
         
         //Assert
-        clientStorage.GetAccounts(client,1,accounts.Count, null).Should().Contain(account);
+        _clientStorage.GetAccounts(client,1,accounts.Count, null).Should().Contain(account);
     }
     
     [Fact]
     public void ClientServiceUpdateClientAccountShouldUpdateAccount()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var clientStorage = new ClientStorage();
-        var clientService = new ClientService(clientStorage);
-        
-        var client = testDataGenerator.GenerateClients().First();
-        var accounts = testDataGenerator.GenerateAccounts();
+        var client = _testDataGenerator.GenerateClients().First();
+        var accounts = _testDataGenerator.GenerateAccounts();
         var account = accounts.First();
         var updatedAccount = accounts.Last();
         updatedAccount.Currency = account.Currency;
         
-        clientService.Add(client);
-        clientService.AddAccount(client, account);
+        _clientService.Add(client);
+        _clientService.AddAccount(account);
         
         //Act
-        clientService.UpdateAccount(client, updatedAccount);
+        _clientService.UpdateAccount(updatedAccount);
         
         //Assert
         account.Should().BeEquivalentTo(updatedAccount);
@@ -138,21 +131,17 @@ public class ClientServiceTests
     public void ClientServiceDeleteClientAccountShouldDeleteAccount()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var clientStorage = new ClientStorage();
-        var clientService = new ClientService(clientStorage);
-        
-        var client = testDataGenerator.GenerateClients().First();
-        var accounts = testDataGenerator.GenerateAccounts();
+        var client = _testDataGenerator.GenerateClients().First();
+        var accounts = _testDataGenerator.GenerateAccounts();
         var account = accounts.First();
         
-        clientService.Add(client);
-        clientService.AddAccount(client, account);
+        _clientService.Add(client);
+        _clientService.AddAccount(account);
         
         //Act
-        clientService.DeleteAccount(client, account);
+        _clientService.DeleteAccount(account.Id);
         
         //Assert
-        clientStorage.GetAccounts(client,1,accounts.Count, null).Should().NotContain(account);
+        _clientStorage.GetAccounts(client,1,accounts.Count, null).Should().NotContain(account);
     }
 }
