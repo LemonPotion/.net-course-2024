@@ -1,4 +1,5 @@
 ﻿using BankSystem.App.Services;
+using BankSystem.Data.EntityFramework;
 using BankSystem.Data.Storages;
 using FluentAssertions;
 using Xunit;
@@ -7,82 +8,82 @@ namespace BankSystem.App.Tests;
 
 public class EmployeeServiceTests
 {
+    private readonly BankSystemContext _bankSystemContext;
+    private readonly EmployeeStorage _employeeStorage;
+    private readonly EmployeeService _employeeService;
+    private readonly TestDataGenerator _testDataGenerator;
+
+    public EmployeeServiceTests()
+    {
+        _bankSystemContext = new BankSystemContext();
+        _employeeStorage = new EmployeeStorage(new BankSystemContext());
+        _employeeService = new EmployeeService(_employeeStorage);
+        _testDataGenerator = new TestDataGenerator();
+    }
+
     [Fact]
     public void EmployeeServiceAddEmployeeShouldAddEmployee()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var employeeStorage = new EmployeeStorage();
-        var employeeService = new EmployeeService(employeeStorage);
-        
-        var employees = testDataGenerator.GenerateEmployees();
-        
+        var employees = _testDataGenerator.GenerateEmployees();
+
         //Act
-        employeeService.Add(employees.First());
+        _employeeService.Add(employees.First());
 
         //Assert
-        employeeStorage.Get(1, employees.Count, null).Should().NotBeNull();
+        _employeeStorage.Get(1, employees.Count, null).Should().NotBeNull();
     }
-    
+
     [Fact]
     public void EmployeeServiceGetPagedReturnsPagedEmployees()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var employeeStorage = new EmployeeStorage();
-        var employeeService = new EmployeeService(employeeStorage);
-        
-        var employees = testDataGenerator.GenerateEmployees();
+        var employees = _testDataGenerator.GenerateEmployees();
         foreach (var item in employees)
         {
-            employeeService.Add(item);
+            _employeeService.Add(item);
         }
 
         //Act
-        var filteredEmployees = employeeService.GetPaged(1, 10, null);
+        var filteredEmployees = _employeeService.GetPaged(1, 10, null);
 
         //Assert
         filteredEmployees.Should().NotBeNull();
     }
-    
+
     [Fact]
     public void EmployeeServiceUpdateEmployeeShouldUpdateEmployee()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var employeeStorage = new EmployeeStorage();
-        var employeeService = new EmployeeService(employeeStorage);
-        
-        var employees = testDataGenerator.GenerateEmployees();
+        var employees = _testDataGenerator.GenerateEmployees();
         var originalEmployee = employees.First();
         var updatedEmployee = employees.Last();
-        updatedEmployee.PassportNumber = originalEmployee.PassportNumber;
-        
-        employeeService.Add(originalEmployee);
-        
+
+        _employeeService.Add(originalEmployee);
+        var employee = _employeeService.GetById(originalEmployee.Id);
+        updatedEmployee.Id = employee.Id;
+
         //Act
-        employeeService.Update(updatedEmployee);
-        
+        _employeeService.Update(updatedEmployee.Id,updatedEmployee);
+
+        var updatedEmployeeFromDb = _employeeService.GetById(originalEmployee.Id);
+
         //Assert
-        originalEmployee.Should().BeEquivalentTo(updatedEmployee);
+        employee.Should().BeEquivalentTo(updatedEmployee);
     }
-    
+
     [Fact]
     public void EmployeeServiceDeleteEmployeeShouldDeleteEmployee()
     {
         //Arrange
-        var testDataGenerator = new TestDataGenerator();
-        var employeeStorage = new EmployeeStorage();
-        var employeeService = new EmployeeService(employeeStorage);
-        
-        var employees = testDataGenerator.GenerateEmployees();
+        var employees = _testDataGenerator.GenerateEmployees();
         var employee = employees.First();
-        employeeService.Add(employee);
-        
+        _employeeService.Add(employee);
+
         //Act
-        employeeService.Delete(employee);
-        
+        _employeeService.Delete(employee.Id);
+
         //Assert
-        employeeStorage.Get(1, employees.Count, null).Should().NotContain(employee);
+        _employeeStorage.Get(1, employees.Count, null).Should().NotContain(employee);
     }
 }

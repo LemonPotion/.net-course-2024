@@ -1,4 +1,5 @@
 ﻿using BankSystem.App.Services;
+using BankSystem.Data.EntityFramework;
 using BankSystem.Data.Storages;
 using FluentAssertions;
 using Xunit;
@@ -7,69 +8,170 @@ namespace BankSystem.Data.Tests;
 
 public class ClientStorageTests
 {
-    [Fact]
-    public void ClientStorageAddClientToStorageShouldAddSuccessfully()
+    private readonly BankSystemContext _bankSystemContext;
+    private readonly ClientStorage _clientStorage;
+    private readonly TestDataGenerator _testDataGenerator;
+
+    public ClientStorageTests()
     {
-        //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new ClientStorage();
-        var clients = dataGenerator.GenerateClientAccounts();
-        
-        //Act
-        storage.AddRange(clients);
-        
-        //Assert
-        storage.Get(1, clients.Count, null).Should().BeEquivalentTo(clients.Keys);
+        _bankSystemContext = new BankSystemContext();
+        _clientStorage = new ClientStorage(_bankSystemContext);
+        _testDataGenerator = new TestDataGenerator();
     }
 
     [Fact]
-    public void ClientStorageGetYoungestClientReturnsYoungestClient()
+    public void ClientStorageAddClientShouldAddClientWithDefaultAccount()
     {
         //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new ClientStorage();
-        var clients = dataGenerator.GenerateClientAccounts();
-        storage.AddRange(clients);
-        
+        var client = _testDataGenerator.GenerateClients(1).First();
+
         //Act
-        var youngestClient = storage.GetYoungestClient();
-        var expectedYoungestClient = clients.Keys.MinBy(c => c.Age);
-        
+        _clientStorage.Add(client);
+
         //Assert
-        youngestClient.Should().BeEquivalentTo(expectedYoungestClient);
+        _clientStorage.GetById(client.Id).Should().BeEquivalentTo(client);
     }
-    
+
     [Fact]
-    public void ClientStorageGetOldestClientReturnsOldestClient()
+    public void ClientStorageGetPagedShouldReturnClients()
     {
         //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new ClientStorage();
-        var clients = dataGenerator.GenerateClientAccounts();
-        storage.AddRange(clients);
-        
+        var clients = _testDataGenerator.GenerateClients(1).First();
+
         //Act
-        var oldestClient = storage.GetOldestClient();
-        var expectedOldestClient = clients.Keys.MaxBy(c => c.Age);
-        
+        var result = _clientStorage.Get(1, _bankSystemContext.Clients.Count(), null);
+
         //Assert
-        oldestClient.Should().BeEquivalentTo(expectedOldestClient);
+        _clientStorage.Get(1, _bankSystemContext.Clients.Count(), null).Should().Contain(result);
     }
-    
+
     [Fact]
-    public void ClientStorageGetAverageClientAgeReturnsAverageClientAge()
+    public void ClientStorageGetByIdShouldReturnClient()
     {
         //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new ClientStorage();
-        var clients = dataGenerator.GenerateClientAccounts();
-        storage.AddRange(clients);
-        
+        var client = _testDataGenerator.GenerateClients(1).First();
+        _clientStorage.Add(client);
+        var addedClient = _bankSystemContext.Clients.Find(client.Id);
+
         //Act
-        var averageAge = storage.GetAverageClientAge();
-        var expectedAverageAge = clients.Keys.Average(c => c.Age);
-        
+        var result = _clientStorage.GetById(client.Id);
+
         //Assert
-        averageAge.Should().Be(expectedAverageAge);
+        result.Should().BeEquivalentTo(addedClient);
+    }
+
+    [Fact]
+    public void ClientStorageUpdateClientShouldUpdateClient()
+    {
+        //Arrange
+        var client = _testDataGenerator.GenerateClients(1).First();
+        var updatedClient = _testDataGenerator.GenerateClients(1).First();
+        _clientStorage.Add(client);
+        updatedClient.Id = client.Id;
+
+        //Act
+        _clientStorage.Update(updatedClient.Id, updatedClient);
+
+        //Assert
+
+        _clientStorage.GetById(client.Id).Should().Be(updatedClient);
+    }
+
+    [Fact]
+    public void ClientStorageDeleteClientShouldDeleteClient()
+    {
+        //Arrange
+        var client = _testDataGenerator.GenerateClients(1).First();
+        _clientStorage.Add(client);
+
+
+        //Act
+        _clientStorage.Delete(client.Id);
+
+        //Assert
+        _clientStorage.GetById(client.Id).Should().BeNull();
+    }
+
+    [Fact]
+    public void ClientStorageAddAccountShouldAddClientAccount()
+    {
+        //Arrange
+        var client = _testDataGenerator.GenerateClients(1).First();
+        var account = _testDataGenerator.GenerateAccounts(1).First();
+        _clientStorage.Add(client);
+        account.ClientId = client.Id;
+
+
+        //Act
+        _clientStorage.AddAccount(account);
+
+        //Assert
+        _clientStorage.GetAccountById(account.Id).Should().BeEquivalentTo(account);
+    }
+
+    [Fact]
+    public void ClientStorageGetAccountByIdShouldReturnAccount()
+    {
+        //Arrange
+        var client = _testDataGenerator.GenerateClients(1).First();
+        _clientStorage.Add(client);
+        var account = client.Accounts.First();
+
+
+        //Act
+        var result = _clientStorage.GetAccountById(account.Id);
+
+        //Assert
+        result.Should().BeEquivalentTo(account);
+    }
+
+    [Fact]
+    public void ClientStorageGetAccountsPagedShouldReturnAccounts()
+    {
+        //Arrange
+        var client = _testDataGenerator.GenerateClients(1).First();
+        _clientStorage.Add(client);
+
+        //Act
+        var result = _clientStorage.GetAccounts(1, client.Accounts.Count, null);
+
+        //Assert
+        _clientStorage.GetAccounts(1, client.Accounts.Count, null).Should().Contain(client.Accounts);
+    }
+
+    [Fact]
+    public void ClientStorageUpdateAccountShouldUpdateAccount()
+    {
+        //Arrange
+        var client = _testDataGenerator.GenerateClients(1).First();
+        var updatedAccount = _testDataGenerator.GenerateAccounts(1).First();
+        _clientStorage.Add(client);
+        var account = client.Accounts.First();
+        updatedAccount.Id = account.Id;
+        updatedAccount.Client = account.Client;
+        updatedAccount.Currency = account.Currency;
+        updatedAccount.CurrencyId = account.CurrencyId;
+        updatedAccount.ClientId = account.ClientId;
+
+        //Act
+        _clientStorage.UpdateAccount(updatedAccount.Id, updatedAccount);
+
+        //Assert
+        _clientStorage.GetAccountById(updatedAccount.Id).Should().BeEquivalentTo(updatedAccount);
+    }
+
+    [Fact]
+    public void ClientStorageDeleteAccountShouldDeleteAccount()
+    {
+        //Arrange
+        var client = _testDataGenerator.GenerateClients(1).First();
+        _clientStorage.Add(client);
+        var account = client.Accounts.First();
+
+        //Act
+        _clientStorage.DeleteAccount(account.Id);
+
+        //Assert
+        _clientStorage.GetAccounts(1, client.Accounts.Count, null).Should().NotContain(account);
     }
 }

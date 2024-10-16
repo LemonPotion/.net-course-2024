@@ -1,12 +1,15 @@
 ﻿namespace BankSystem.Domain.Models;
 
-public struct Currency
+public class Currency
 {
-    public string Code { get; }
+    public Guid Id { get; set; }
+    public string Code { get; set; }
 
-    public string Name { get; }
+    public string Name { get; set; }
 
-    public string Symbol { get; }
+    public string Symbol { get; set; }
+    
+    public ICollection<Account> Accounts { get; set; }
 
     public Currency(string symbol, string name, string code)
     {

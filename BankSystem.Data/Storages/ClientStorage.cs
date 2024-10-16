@@ -1,140 +1,161 @@
 ﻿using BankSystem.App.Interfaces;
+using BankSystem.Data.EntityFramework;
 using BankSystem.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BankSystem.Data.Storages;
 
 public class ClientStorage : IClientStorage
 {
-    private readonly Dictionary<Client, List<Account>> _clients;
+    private readonly BankSystemContext _bankSystemContext;
 
-    public ClientStorage()
+    public ClientStorage(BankSystemContext bankSystemContext)
     {
-        _clients = new Dictionary<Client, List<Account>>();
-    }
-    
-    public void Add(Client item)
-    {
-        var accounts = new List<Account>
-        {
-            GetDefaultAccount()
-        };
-        _clients.Add(item, accounts);
+        _bankSystemContext = bankSystemContext;
     }
 
-    public void AddRange(Dictionary<Client, List<Account>> clientAccountDictionary)
+    public void Add(Client client)
     {
-        foreach (var item in clientAccountDictionary)
-        {
-            if (!_clients.TryGetValue(item.Key, out var client))
-            {
-                _clients.Add(item.Key, item.Value);
-            }
-            else
-            {
-                client.AddRange(item.Value);
-            }
-        }
+        var account = GetDefaultAccount();
+
+        _bankSystemContext.Clients.Add(client);
+        account.ClientId = client.Id;
+        _bankSystemContext.Accounts.Add(account);
+
+        _bankSystemContext.SaveChanges();
     }
-    
+
     public List<Client> Get(int pageNumber, int pageSize, Func<Client, bool>? filter)
     {
-        var items = _clients.Keys.AsEnumerable();
+        var items = _bankSystemContext.Clients.AsEnumerable();
+
         if (filter is not null)
         {
             items = items.Where(filter);
         }
-        
+
         return items
-            .Skip((pageNumber - 1) * pageSize) 
+            .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToList();
     }
-    
-    public void Update(Client item)
+
+    public Client GetById(Guid id)
     {
-        var client = _clients.Keys.FirstOrDefault(c => c.PassportNumber == item.PassportNumber);
+        return _bankSystemContext.Find<Client>(id);
+    }
+
+    public void Update(Guid id, Client employee)
+    {
+        var existingclient = GetById(employee.Id);
+
+        if (employee is null) return;
+
+        existingclient.FirstName = employee.FirstName;
+        existingclient.LastName = employee.LastName;
+        existingclient.PhoneNumber = employee.PhoneNumber;
+        existingclient.BankAccountNumber = employee.BankAccountNumber;
+        existingclient.Email = employee.Email;
+        existingclient.BirthDay = employee.BirthDay;
+        existingclient.PassportNumber = employee.PassportNumber;
+
+        _bankSystemContext.SaveChanges();
+    }
+
+    public void Delete(Guid id)
+    {
+        var client = _bankSystemContext.Clients.Find(id);
 
         if (client is null) return;
-        
-        client.FirstName = item.FirstName;
-        client.LastName = item.LastName;
-        client.PhoneNumber = item.PhoneNumber;
-        client.BankAccountNumber = item.BankAccountNumber;
-        client.Email = item.Email;
-        client.BirthDay = item.BirthDay;
-    }
-    
-    public void Delete(Client item)
-    {
-        _clients.Remove(item);
-    }
-    
-    public Client GetYoungestClient()
-    {
-        return _clients.Keys.MinBy(c => c.Age);
+
+        _bankSystemContext.Remove(client);
+
+        _bankSystemContext.SaveChanges();
     }
 
-    public Client GetOldestClient()
+
+    public void AddAccount(Account account)
     {
-        return _clients.Keys.MaxBy(c => c.Age);
+        if (GetById(account.ClientId) is null) return;
+
+        _bankSystemContext.Accounts.Add(account);
+
+        _bankSystemContext.SaveChanges();
     }
 
-    public double GetAverageClientAge()
+    public Account GetAccountById(Guid accountId)
     {
-        return _clients.Keys.Average(c => c.Age);
+        return _bankSystemContext.Accounts.Find(accountId);
     }
 
-    public void AddAccount(Client client, Account account)
+    public List<Account> GetAccounts(int pageNumber, int pageSize, Func<Account, bool>? filter)
     {
-        var accounts = _clients[client];
-        
-        if (accounts is null) return; 
-        
-        accounts.Add(account);
-    }
-    
-    public List<Account> GetAccounts(Client client, int pageNumber, int pageSize, Func<Account, bool>? filter)
-    {
-        var accounts = _clients[client].AsEnumerable();
+        var accounts = _bankSystemContext.Accounts.AsEnumerable();
         if (filter is not null)
         {
             accounts = accounts.Where(filter);
         }
+
         return accounts
-            .Skip((pageNumber - 1) * pageSize) 
+            .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToList();
     }
-    
-    private static Account GetDefaultAccount()
+
+    private Account GetDefaultAccount()
     {
+        var currency = _bankSystemContext.Currencies.FirstOrDefault(c => c.Code == "USD");
+
+        if (currency == null)
+        {
+            currency = new Currency("$", "United States dollar", "USD");
+            _bankSystemContext.Currencies.Add(currency);
+            _bankSystemContext.SaveChanges();
+        }
+
         return new Account
         {
-            Currency = new Currency("$", "United States dollar", "USD"),
+            Currency = currency,
             Amount = 0
         };
     }
 
-    public void UpdateAccount(Client client, Account account)
-    { 
-        var accounts = _clients[client];
-        
-        if (accounts is null) return;
+    public void UpdateAccount(Guid id, Account account)
+    {
+        var originalAccount = _bankSystemContext.Accounts.Find(account.Id);
 
-        var clientAccount = accounts.FirstOrDefault(a => a.Currency.Equals(account.Currency));
+        if (originalAccount is null) return;
 
-        if (clientAccount is null) return;
-        
-        clientAccount.Currency = account.Currency;
-        clientAccount.Amount = account.Amount;
+        originalAccount.Amount = account.Amount;
+
+        _bankSystemContext.Update(originalAccount);
+
+        _bankSystemContext.SaveChanges();
     }
 
-    public void DeleteAccount(Client client, Account account)
+    public void DeleteAccount(Guid accountId)
     {
-        var accounts = _clients[client];
-        
-        if (accounts is null) return;
-        
-        var clientAccount = accounts.Remove(account);
+        var account = _bankSystemContext.Accounts.Find(accountId);
+
+        if (account is null) return;
+
+        _bankSystemContext.Remove(account);
+
+        _bankSystemContext.SaveChanges();
+    }
+    
+    public Client GetYoungestClient()
+    {
+        return _bankSystemContext.Clients.ToList().MinBy(c => c.Age);
+    }
+
+    public Client GetOldestClient()
+    {
+        return _bankSystemContext.Clients.ToList().MaxBy(c => c.Age);
+    }
+
+    public double GetAverageClientAge()
+    {
+        return _bankSystemContext.Clients.ToList().Average(c => c.Age);
     }
 }

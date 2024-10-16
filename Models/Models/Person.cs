@@ -2,6 +2,8 @@
 
 public class Person
 {
+    public Guid Id { get; set; }
+    
     public string FirstName { get; set; }
     
     public string LastName { get; set; }
@@ -22,13 +24,7 @@ public class Person
             return false;
         else if (obj is not Person entity)
             return false;
-        else if (entity.FirstName != FirstName)
-            return false;
-        else if (entity.LastName != LastName)
-            return false;
-        else if (entity.BirthDay != BirthDay)
-            return false;
-        else if (entity.PassportNumber != PassportNumber)
+        else if (entity.Id != Id)
             return false;
         return true;
     }

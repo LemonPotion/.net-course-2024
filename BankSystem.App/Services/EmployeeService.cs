@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using BankSystem.App.Exceptions;
+﻿using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 
@@ -21,23 +20,27 @@ public class EmployeeService
         _employeeStorage.Add(employee);
     }
 
-    public void Update(Employee employee)
+    public Employee GetById(Guid id)
     {
-        ValidateEmployee(employee);
-        _employeeStorage.Update(employee);
-    }
-
-    public void Delete(Employee employee)
-    {
-        ValidateEmployee(employee);
-        _employeeStorage.Delete(employee);
+        return _employeeStorage.GetById(id);
     }
 
     public IEnumerable<Employee> GetPaged(int pageNumber, int pageSize, Func<Employee, bool>? filter)
     {
         return _employeeStorage.Get(pageNumber, pageSize, filter);
     }
-    
+
+    public void Update(Guid id, Employee employee)
+    {
+        ValidateEmployee(employee);
+        _employeeStorage.Update(id, employee);
+    }
+
+    public void Delete(Guid id)
+    {
+        _employeeStorage.Delete(id);
+    }
+
     private static void ValidateEmployee(Employee employee)
     {
         if (employee is null)

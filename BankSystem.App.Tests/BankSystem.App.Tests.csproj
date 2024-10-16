@@ -7,14 +7,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FluentAssertions" Version="6.12.1" />
-      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-      <PackageReference Include="xunit" Version="2.9.2" />
+        <PackageReference Include="FluentAssertions" Version="6.12.1"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1"/>
+        <PackageReference Include="xunit" Version="2.9.2"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BankSystem.App\BankSystem.App.csproj" />
-      <ProjectReference Include="..\BankSystem.Data\BankSystem.Data.csproj" />
+        <ProjectReference Include="..\BankSystem.App\BankSystem.App.csproj"/>
+        <ProjectReference Include="..\BankSystem.Data\BankSystem.Data.csproj"/>
     </ItemGroup>
 
 </Project>

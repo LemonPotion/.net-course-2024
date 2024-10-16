@@ -13,13 +13,13 @@ public class BankService
         _bonuses = new Dictionary<Person, decimal>();
     }
 
-    public void AddBonus<TPerson>(TPerson person, decimal bonus) 
+    public void AddBonus<TPerson>(TPerson person, decimal bonus)
         where TPerson : Person
     {
         _bonuses[person] += bonus;
     }
-    
-    public void AddToBlackList<TPerson>(TPerson person) 
+
+    public void AddToBlackList<TPerson>(TPerson person)
         where TPerson : Person
     {
         if (!IsPersonInBlackList(person))
@@ -27,18 +27,18 @@ public class BankService
             _blackList.Add(person);
         }
     }
-    
-    public bool IsPersonInBlackList<TPerson>(TPerson person) 
+
+    public bool IsPersonInBlackList<TPerson>(TPerson person)
         where TPerson : Person
     {
         return _blackList.Contains(person);
     }
-    
+
     public decimal CalculateBankOwnersSalary(decimal bankProfit, decimal expenses, int numberOfOwners)
     {
         return (bankProfit - expenses) / numberOfOwners;
     }
-    
+
     public Employee ConvertClientToEmployee(Client client)
     {
         return new Employee

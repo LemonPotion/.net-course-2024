@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using BankSystem.App.Exceptions;
+﻿using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 
@@ -20,47 +19,56 @@ public class ClientService
 
         _clientStorage.Add(client);
     }
-    
+
     public List<Client> GetPaged(int pageNumber, int pageSize, Func<Client, bool>? filter)
     {
         return _clientStorage.Get(pageNumber, pageSize, filter);
     }
-    
-    public List<Account> GetAccountsPaged(int pageNumber, int pageSize, Client client, Func<Account, bool>? filter)
+
+    public Client GetById(Guid id)
     {
-        return _clientStorage.GetAccounts(client, pageNumber, pageSize, filter);
+        return _clientStorage.GetById(id);
     }
 
-    public void Update(Client client)
+    public void Update(Guid id,Client client)
     {
         ValidateClient(client);
-        _clientStorage.Update(client);
+        _clientStorage.Update(id, client);
     }
 
-    public void Delete(Client client)
+    public void Delete(Guid id)
     {
-        ValidateClient(client);
-        _clientStorage.Delete(client);
-    }
-    
-    public void AddAccount(Client client, Account account)
-    {
-        ValidateClient(client);
-        _clientStorage.AddAccount(client, account);
-    }
-    
-    public void UpdateAccount(Client client, Account account)
-    {
-        ValidateClient(client);
-        _clientStorage.UpdateAccount(client, account);
+        ValidateClient(GetById(id));
+        _clientStorage.Delete(id);
     }
 
-    public void DeleteAccount(Client client, Account account)
+    public void AddAccount(Account account)
     {
-        ValidateClient(client);
-        _clientStorage.DeleteAccount(client, account);
+        _clientStorage.AddAccount(account);
     }
-    
+
+    public Account GetAccountById(Guid id)
+    {
+        return _clientStorage.GetAccountById(id);
+    }
+
+    public List<Account> GetAccountsPaged(int pageNumber, int pageSize, Guid clientId, Func<Account, bool>? filter)
+    {
+        var client = GetById(clientId);
+        ValidateClient(client);
+        return _clientStorage.GetAccounts(pageNumber, pageSize, filter);
+    }
+
+    public void UpdateAccount(Guid id, Account account)
+    {
+        _clientStorage.UpdateAccount(id, account);
+    }
+
+    public void DeleteAccount(Guid id)
+    {
+        _clientStorage.DeleteAccount(id);
+    }
+
     private static void ValidateClient(Client client)
     {
         if (client is null)
@@ -69,7 +77,7 @@ public class ClientService
         }
         else if (client.Age < 18)
             throw new AgeRestrictionException(nameof(client));
-        else  if (client.FirstName is null || client.LastName is null || client.BirthDay == DateTime.MinValue || client.PassportNumber is null)
+        else if (client.PassportNumber is null)
         {
             throw new PassportDataMissingException(nameof(client));
         }

@@ -1,4 +1,5 @@
 ﻿using BankSystem.App.Services;
+using BankSystem.Data.EntityFramework;
 using BankSystem.Data.Storages;
 using FluentAssertions;
 using Xunit;
@@ -7,69 +8,86 @@ namespace BankSystem.Data.Tests;
 
 public class EmployeeStorageTests
 {
-    [Fact]
-    public void EmployeeStorageAddEmployeeToStorageShouldAddSuccessfully()
+    private readonly BankSystemContext _bankSystemContext;
+    private readonly EmployeeStorage _employeeStorage;
+    private readonly TestDataGenerator _testDataGenerator;
+
+    public EmployeeStorageTests()
     {
-        //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new EmployeeStorage();
-        var employees = dataGenerator.GenerateEmployees();
-        
-        //Act
-        storage.AddRange(employees);
-        
-        //Assert
-        storage.Get(1, employees.Count, null).Should().BeEquivalentTo(employees);
+        _bankSystemContext = new BankSystemContext();
+        _employeeStorage = new EmployeeStorage(_bankSystemContext);
+        _testDataGenerator = new TestDataGenerator();
     }
 
     [Fact]
-    public void EmployeeStorageGetYoungestEmployeeReturnsYoungestEmployee()
+    public void EmployeeStorageAddEmployeeShouldAddEmployee()
     {
         //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new EmployeeStorage();
-        var employees = dataGenerator.GenerateEmployees();
-        storage.AddRange(employees);
-        
+        var employee = _testDataGenerator.GenerateEmployees(1).First();
+
         //Act
-        var youngestEmployee = storage.GetYoungestEmployee();
-        var expectedYoungestEmployee = employees.MinBy(c => c.Age);
-        
+        _employeeStorage.Add(employee);
+
         //Assert
-        youngestEmployee.Should().BeEquivalentTo(expectedYoungestEmployee);
+        _employeeStorage.GetById(employee.Id).Should().BeEquivalentTo(employee);
     }
-    
+
     [Fact]
-    public void EmployeeStorageGetOldestEmployeeReturnsOldestEmployee()
+    public void EmployeeStorageGetEmployeeByIdPagedShouldReturnEmployee()
     {
         //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new EmployeeStorage();
-        var employees = dataGenerator.GenerateEmployees();
-        storage.AddRange(employees);
-        
+        var employee = _testDataGenerator.GenerateEmployees(1).First();
+        _employeeStorage.Add(employee);
+
         //Act
-        var oldestEmployee = storage.GetOldestEmployee();
-        var expectedOldestEmployee = employees.MaxBy(c => c.Age);
-        
+        var result = _employeeStorage.GetById(employee.Id);
+
         //Assert
-        oldestEmployee.Should().BeEquivalentTo(expectedOldestEmployee);
+        _employeeStorage.GetById(employee.Id).Should().BeEquivalentTo(result);
     }
-    
+
     [Fact]
-    public void EmployeeStorageGetAverageEmployeeAgeReturnsAverageEmployeeAge()
+    public void EmployeeStorageGetEmployeesPagedShouldReturnEmployees()
     {
         //Arrange
-        var dataGenerator = new TestDataGenerator();
-        var storage = new EmployeeStorage();
-        var employees = dataGenerator.GenerateEmployees();
-        storage.AddRange(employees);
-        
+        var employee = _testDataGenerator.GenerateEmployees(1).First();
+        _employeeStorage.Add(employee);
+
         //Act
-        var averageAge = storage.GetAverageEmployeeAge();
-        var expectedAverageAge = employees.Average(c => c.Age);
-        
+        var result = _employeeStorage.Get(1, _bankSystemContext.Employees.Count(), null);
+
         //Assert
-        averageAge.Should().Be(expectedAverageAge);
+        _employeeStorage.Get(1, _bankSystemContext.Employees.Count(), null).Should().Contain(result);
+    }
+
+    [Fact]
+    public void EmployeeStorageUpdateEmployeeShouldUpdateEmployee()
+    {
+        //Arrange
+        var employee = _testDataGenerator.GenerateEmployees(1).First();
+        var updatedEmployee = _testDataGenerator.GenerateEmployees(1).First();
+        _employeeStorage.Add(employee);
+        updatedEmployee.Id = employee.Id;
+
+        //Act
+        _employeeStorage.Update(updatedEmployee.Id,  updatedEmployee);
+
+        //Assert
+        _employeeStorage.GetById(employee.Id).Should().Be(updatedEmployee);
+    }
+
+    [Fact]
+    public void EmployeeStorageDeleteEmployeeShouldDeleteEmployee()
+    {
+        //Arrange
+        var employee = _testDataGenerator.GenerateEmployees(1).First();
+        _employeeStorage.Add(employee);
+
+
+        //Act
+        _employeeStorage.Delete(employee.Id);
+
+        //Assert
+        _employeeStorage.GetById(employee.Id).Should().BeNull();
     }
 }
