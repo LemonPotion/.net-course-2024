@@ -29,7 +29,7 @@ public class EmployeeStorageTests
         _employeeStorage.Add(employee);
 
         //Assert
-        _bankSystemContext.Employees.Find(employee.Id).Should().BeEquivalentTo(employee);
+        _employeeStorage.GetById(employee.Id).Should().BeEquivalentTo(employee);
     }
 
     [Fact]
@@ -43,7 +43,7 @@ public class EmployeeStorageTests
         var result = _employeeStorage.GetById(employee.Id);
 
         //Assert
-        _bankSystemContext.Employees.Find(employee.Id).Should().BeEquivalentTo(result);
+        _employeeStorage.GetById(employee.Id).Should().BeEquivalentTo(result);
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class EmployeeStorageTests
         var result = _employeeStorage.Get(1, _bankSystemContext.Employees.Count(), null);
 
         //Assert
-        _bankSystemContext.Employees.Should().Contain(result);
+        _employeeStorage.Get(1, _bankSystemContext.Employees.Count(), null).Should().Contain(result);
     }
 
     [Fact]
@@ -70,10 +70,10 @@ public class EmployeeStorageTests
         updatedEmployee.Id = employee.Id;
 
         //Act
-        _employeeStorage.Update(updatedEmployee);
+        _employeeStorage.Update(updatedEmployee.Id,  updatedEmployee);
 
         //Assert
-        _bankSystemContext.Employees.Find(employee.Id).Should().Be(updatedEmployee);
+        _employeeStorage.GetById(employee.Id).Should().Be(updatedEmployee);
     }
 
     [Fact]
@@ -88,6 +88,6 @@ public class EmployeeStorageTests
         _employeeStorage.Delete(employee.Id);
 
         //Assert
-        _bankSystemContext.Employees.Find(employee.Id).Should().BeNull();
+        _employeeStorage.GetById(employee.Id).Should().BeNull();
     }
 }

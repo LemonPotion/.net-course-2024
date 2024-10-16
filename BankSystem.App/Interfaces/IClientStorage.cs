@@ -6,7 +6,7 @@ public interface IClientStorage : IStorage<Client>
 {
     public void AddAccount(Account account);
 
-    public void UpdateAccount(Account account);
+    public void UpdateAccount(Guid id, Account account);
 
     public void DeleteAccount(Guid accountId);
 

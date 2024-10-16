@@ -40,9 +40,9 @@ public class EmployeeStorage : IStorage<Employee>
             .ToList();
     }
 
-    public void Update(Employee employee)
+    public void Update(Guid id, Employee employee)
     {
-        var existingEmployee = _bankSystemContext.Employees.Find(employee.Id);
+        var existingEmployee = _bankSystemContext.Employees.Find(id);
 
         if (employee is null) return;
 
@@ -66,5 +66,20 @@ public class EmployeeStorage : IStorage<Employee>
 
         _bankSystemContext.Employees.Remove(employee);
         _bankSystemContext.SaveChanges();
+    }
+    
+    public Employee GetYoungestEmployee()
+    {
+        return _bankSystemContext.Employees.ToList().MinBy(c => c.Age);
+    }
+
+    public Employee GetOldestEmployee()
+    {
+        return _bankSystemContext.Employees.ToList().MaxBy(c => c.Age);
+    }
+
+    public double GetAverageEmployeeAge()
+    {
+        return _bankSystemContext.Employees.ToList().Average(c => c.Age);
     }
 }

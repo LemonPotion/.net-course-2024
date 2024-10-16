@@ -45,7 +45,7 @@ public class ClientStorage : IClientStorage
         return _bankSystemContext.Find<Client>(id);
     }
 
-    public void Update(Client employee)
+    public void Update(Guid id, Client employee)
     {
         var existingclient = GetById(employee.Id);
 
@@ -120,7 +120,7 @@ public class ClientStorage : IClientStorage
         };
     }
 
-    public void UpdateAccount(Account account)
+    public void UpdateAccount(Guid id, Account account)
     {
         var originalAccount = _bankSystemContext.Accounts.Find(account.Id);
 
@@ -142,5 +142,20 @@ public class ClientStorage : IClientStorage
         _bankSystemContext.Remove(account);
 
         _bankSystemContext.SaveChanges();
+    }
+    
+    public Client GetYoungestClient()
+    {
+        return _bankSystemContext.Clients.ToList().MinBy(c => c.Age);
+    }
+
+    public Client GetOldestClient()
+    {
+        return _bankSystemContext.Clients.ToList().MaxBy(c => c.Age);
+    }
+
+    public double GetAverageClientAge()
+    {
+        return _bankSystemContext.Clients.ToList().Average(c => c.Age);
     }
 }

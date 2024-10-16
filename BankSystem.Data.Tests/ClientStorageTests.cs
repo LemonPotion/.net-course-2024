@@ -29,7 +29,7 @@ public class ClientStorageTests
         _clientStorage.Add(client);
 
         //Assert
-        _bankSystemContext.Clients.Find(client.Id).Should().BeEquivalentTo(client);
+        _clientStorage.GetById(client.Id).Should().BeEquivalentTo(client);
     }
 
     [Fact]
@@ -42,7 +42,7 @@ public class ClientStorageTests
         var result = _clientStorage.Get(1, _bankSystemContext.Clients.Count(), null);
 
         //Assert
-        _bankSystemContext.Clients.Should().Contain(result);
+        _clientStorage.Get(1, _bankSystemContext.Clients.Count(), null).Should().Contain(result);
     }
 
     [Fact]
@@ -70,11 +70,11 @@ public class ClientStorageTests
         updatedClient.Id = client.Id;
 
         //Act
-        _clientStorage.Update(updatedClient);
+        _clientStorage.Update(updatedClient.Id, updatedClient);
 
         //Assert
 
-        _bankSystemContext.Clients.Find(client.Id).Should().Be(updatedClient);
+        _clientStorage.GetById(client.Id).Should().Be(updatedClient);
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class ClientStorageTests
         _clientStorage.Delete(client.Id);
 
         //Assert
-        _bankSystemContext.Clients.Find(client.Id).Should().BeNull();
+        _clientStorage.GetById(client.Id).Should().BeNull();
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class ClientStorageTests
         _clientStorage.AddAccount(account);
 
         //Assert
-        _bankSystemContext.Accounts.Find(account.Id).Should().BeEquivalentTo(account);
+        _clientStorage.GetAccountById(account.Id).Should().BeEquivalentTo(account);
     }
 
     [Fact]
@@ -136,7 +136,7 @@ public class ClientStorageTests
         var result = _clientStorage.GetAccounts(1, client.Accounts.Count, null);
 
         //Assert
-        _bankSystemContext.Accounts.Should().Contain(client.Accounts);
+        _clientStorage.GetAccounts(1, client.Accounts.Count, null).Should().Contain(client.Accounts);
     }
 
     [Fact]
@@ -154,10 +154,10 @@ public class ClientStorageTests
         updatedAccount.ClientId = account.ClientId;
 
         //Act
-        _clientStorage.UpdateAccount(updatedAccount);
+        _clientStorage.UpdateAccount(updatedAccount.Id, updatedAccount);
 
         //Assert
-        _bankSystemContext.Accounts.Find(updatedAccount.Id).Should().BeEquivalentTo(updatedAccount);
+        _clientStorage.GetAccountById(updatedAccount.Id).Should().BeEquivalentTo(updatedAccount);
     }
 
     [Fact]
@@ -172,6 +172,6 @@ public class ClientStorageTests
         _clientStorage.DeleteAccount(account.Id);
 
         //Assert
-        _bankSystemContext.Accounts.Should().NotContain(account);
+        _clientStorage.GetAccounts(1, client.Accounts.Count, null).Should().NotContain(account);
     }
 }

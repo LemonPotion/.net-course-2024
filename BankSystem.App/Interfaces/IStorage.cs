@@ -7,7 +7,7 @@ public interface IStorage<T>
 
     public void Add(T item);
 
-    public void Update(T employee);
+    public void Update(Guid id, T item);
 
     public void Delete(Guid id);
 }

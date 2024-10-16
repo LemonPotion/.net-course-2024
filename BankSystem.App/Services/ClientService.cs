@@ -30,10 +30,10 @@ public class ClientService
         return _clientStorage.GetById(id);
     }
 
-    public void Update(Client client)
+    public void Update(Guid id,Client client)
     {
         ValidateClient(client);
-        _clientStorage.Update(client);
+        _clientStorage.Update(id, client);
     }
 
     public void Delete(Guid id)
@@ -44,7 +44,6 @@ public class ClientService
 
     public void AddAccount(Account account)
     {
-        ValidateClient(GetById(account.ClientId));
         _clientStorage.AddAccount(account);
     }
 
@@ -60,9 +59,9 @@ public class ClientService
         return _clientStorage.GetAccounts(pageNumber, pageSize, filter);
     }
 
-    public void UpdateAccount(Account account)
+    public void UpdateAccount(Guid id, Account account)
     {
-        _clientStorage.UpdateAccount(account);
+        _clientStorage.UpdateAccount(id, account);
     }
 
     public void DeleteAccount(Guid id)
@@ -78,8 +77,7 @@ public class ClientService
         }
         else if (client.Age < 18)
             throw new AgeRestrictionException(nameof(client));
-        else if (client.FirstName is null || client.LastName is null || client.BirthDay == DateTime.MinValue ||
-                 client.PassportNumber is null)
+        else if (client.PassportNumber is null)
         {
             throw new PassportDataMissingException(nameof(client));
         }

@@ -68,7 +68,7 @@ public class ClientServiceTests
         updatedClient.Id = client.Id;
 
         //Act
-        _clientService.Update(updatedClient);
+        _clientService.Update(updatedClient.Id, updatedClient);
 
         //Assert
         client.Should().BeEquivalentTo(updatedClient);
@@ -122,7 +122,7 @@ public class ClientServiceTests
         _clientService.AddAccount(account);
         updatedAccount.Id = account.Id;
         //Act
-        _clientService.UpdateAccount(updatedAccount);
+        _clientService.UpdateAccount(updatedAccount.Id, updatedAccount);
 
         //Assert
         _bankSystemContext.Find<Account>(account.Id).Should().BeEquivalentTo(updatedAccount, options => options

@@ -30,10 +30,10 @@ public class EmployeeService
         return _employeeStorage.Get(pageNumber, pageSize, filter);
     }
 
-    public void Update(Employee employee)
+    public void Update(Guid id, Employee employee)
     {
         ValidateEmployee(employee);
-        _employeeStorage.Update(employee);
+        _employeeStorage.Update(id, employee);
     }
 
     public void Delete(Guid id)

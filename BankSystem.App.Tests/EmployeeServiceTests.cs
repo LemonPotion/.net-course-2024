@@ -64,7 +64,7 @@ public class EmployeeServiceTests
         updatedEmployee.Id = employee.Id;
 
         //Act
-        _employeeService.Update(updatedEmployee);
+        _employeeService.Update(updatedEmployee.Id,updatedEmployee);
 
         var updatedEmployeeFromDb = _employeeService.GetById(originalEmployee.Id);
 
