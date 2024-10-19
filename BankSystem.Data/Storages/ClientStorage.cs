@@ -1,7 +1,6 @@
 ﻿using BankSystem.App.Interfaces;
 using BankSystem.Data.EntityFramework;
 using BankSystem.Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace BankSystem.Data.Storages;
 

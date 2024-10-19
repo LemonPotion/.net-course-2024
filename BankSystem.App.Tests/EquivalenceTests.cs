@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using BankSystem.App.Services;
+﻿using BankSystem.App.Services;
 using BankSystem.Domain.Models;
 using FluentAssertions;
 using Xunit;
