@@ -1,10 +1,8 @@
-﻿using BankSystem.App.Interfaces;
-using BankSystem.App.Services;
+﻿using BankSystem.App.Services;
 using BankSystem.Data.EntityFramework;
 using BankSystem.Data.Storages;
 using BankSystem.Domain.Models;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace BankSystem.App.Tests;

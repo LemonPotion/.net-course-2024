@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using BankSystem.App.Services;
+﻿using BankSystem.App.Services;
 using BankSystem.Domain.Models;
 using FluentAssertions;
 using Xunit;
@@ -17,6 +16,7 @@ public class EquivalenceTests
         var (key, value) = clientAccountDictionary.ElementAtOrDefault(15);
         var client = new Client()
         {
+            Id = key.Id,
             BankAccountNumber = key.BankAccountNumber,
             BirthDay = key.BirthDay,
             Email = key.Email,
@@ -68,6 +68,7 @@ public class EquivalenceTests
         var employee = employees[15];
         var newEmployee = new Employee()
         {
+            Id = employee.Id,
             BirthDay = employee.BirthDay,
             Contract = employee.Contract,
             Email = employee.Email,
