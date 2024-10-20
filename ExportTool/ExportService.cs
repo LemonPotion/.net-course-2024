@@ -1,8 +1,5 @@
 ﻿using System.Globalization;
 using BankSystem.App.Interfaces;
-using BankSystem.App.Services;
-using BankSystem.Data.EntityFramework;
-using BankSystem.Data.Storages;
 using BankSystem.Domain.Models;
 using CsvHelper;
 
@@ -16,8 +13,8 @@ public class ExportService
     {
         _clientStorage = clientStorage;
     }
-    
-    
+
+
     public void ExportClientsData(IEnumerable<Client> clients, string filePath)
     {
         using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
@@ -26,6 +23,8 @@ public class ExportService
             {
                 using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
                 {
+                    csvWriter.WriteHeader<Client>();
+                    csvWriter.NextRecord();
                     csvWriter.WriteRecords(clients);
                 }
             }
@@ -34,7 +33,7 @@ public class ExportService
 
     public List<Client> ImportClientsData(string filePath)
     {
-        using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
+        using (var fileStream = new FileStream(filePath, FileMode.Open))
         {
             using (var streamReader = new StreamReader(fileStream))
             {

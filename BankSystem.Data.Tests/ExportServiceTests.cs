@@ -33,7 +33,10 @@ public class ExportServiceTests
         _exportService.ExportClientsData(clients, filePath);
         
         //Assert
-        File.Exists(filePath).Should().BeTrue();
+        File.Exists(filePath).Should().BeTrue(); 
+        var importedClients = _exportService.ImportClientsData(filePath); 
+        File.Delete(filePath);
+        importedClients.Should().Contain(clients);
     }
     
     [Fact]
@@ -48,6 +51,8 @@ public class ExportServiceTests
         var clients = _exportService.ImportClientsData(filePath);
         
         //Assert
-        clients.Should().NotBeNull();
+        File.Delete(filePath);
+        clients.Should().NotBeNull(); 
+        clients.Should().BeEquivalentTo(clients, options => options);
     }
 }

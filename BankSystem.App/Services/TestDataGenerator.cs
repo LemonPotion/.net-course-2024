@@ -8,6 +8,7 @@ public class TestDataGenerator
     private readonly Faker _faker = new Faker();
 
     private readonly Faker<Employee> _employeeFaker = new Faker<Employee>()
+        .RuleFor(e => e.Id, f=> f.Random.Guid())
         .RuleFor(e => e.BirthDay, f => f.Date.Past(60, DateTime.Now.AddYears(-18)).ToUniversalTime())
         .RuleFor(e => e.Contract, f => f.Lorem.Sentence())
         .RuleFor(e => e.Email, f => f.Internet.Email())
@@ -19,6 +20,7 @@ public class TestDataGenerator
         .RuleFor(e => e.Contract, f => f.Lorem.Text());
 
     private readonly Faker<Account> _accountFaker = new Faker<Account>()
+        .RuleFor(a => a.Id, f=> f.Random.Guid())
         .RuleFor(a => a.Currency, f =>
             new Currency(
                 f.Finance.Currency().Code,
@@ -27,6 +29,7 @@ public class TestDataGenerator
         .RuleFor(a => a.Amount, f => f.Random.Int());
 
     private readonly Faker<Client> _clientFaker = new Faker<Client>()
+        .RuleFor(c => c.Id, f=> f.Random.Guid())
         .RuleFor(c => c.BirthDay, f => f.Date.Past(60, DateTime.Now.AddYears(-18)).ToUniversalTime())
         .RuleFor(c => c.BankAccountNumber, f => f.Finance.Account())
         .RuleFor(c => c.Email, f => f.Internet.Email())
