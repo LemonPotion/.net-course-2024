@@ -1,21 +1,14 @@
 ﻿using System.Globalization;
+using System.Text.Json;
 using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 using CsvHelper;
 
 namespace ExportTool;
 
-public class ExportService
+public class ExportService <TEntity> where TEntity : class
 {
-    private readonly IClientStorage _clientStorage;
-
-    public ExportService(IClientStorage clientStorage)
-    {
-        _clientStorage = clientStorage;
-    }
-
-
-    public void ExportClientsData(IEnumerable<Client> clients, string filePath)
+    public void ExportData(IEnumerable<TEntity> entities, string filePath)
     {
         using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
         {
@@ -23,15 +16,15 @@ public class ExportService
             {
                 using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture))
                 {
-                    csvWriter.WriteHeader<Client>();
+                    csvWriter.WriteHeader<TEntity>();
                     csvWriter.NextRecord();
-                    csvWriter.WriteRecords(clients);
+                    csvWriter.WriteRecords(entities);
                 }
             }
         }
     }
 
-    public List<Client> ImportClientsData(string filePath)
+    public IEnumerable<TEntity> ImportData(string filePath)
     {
         using (var fileStream = new FileStream(filePath, FileMode.Open))
         {
@@ -39,16 +32,41 @@ public class ExportService
             {
                 using (var csvReader = new CsvReader(streamReader, CultureInfo.InvariantCulture))
                 {
-                    var clients = csvReader.GetRecords<Client>().ToList();
-                    foreach (var client in clients)
-                    {
-                        client.BirthDay = client.BirthDay.ToUniversalTime();
-                        _clientStorage.Add(client);
-                    }
-
-                    return clients;
+                    var entities = csvReader.GetRecords<TEntity>().ToList();
+                    return entities;
                 }
             }
+        }
+    }
+
+    public void SerializeToJson(IEnumerable<TEntity> entities, string filePath)
+    {
+        using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
+        {
+            JsonSerializer.Serialize(fileStream, entities);
+        }
+    }
+    public void SerializeToJson(TEntity entity, string filePath)
+    {
+        using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
+        {
+            JsonSerializer.Serialize(fileStream, entity);
+        }
+    }
+    
+    public TEntity? DeserializeFromJson(string filePath)
+    {
+        using (var fileStream = new FileStream(filePath, FileMode.Open))
+        {
+            return JsonSerializer.Deserialize<TEntity>(fileStream);
+        }
+    }
+    
+    public IEnumerable<TEntity>? DeserializeCollectionFromJson(string filePath)
+    {
+        using (var fileStream = new FileStream(filePath, FileMode.Open))
+        {
+            return JsonSerializer.Deserialize<IEnumerable<TEntity>>(fileStream);
         }
     }
 }
