@@ -31,11 +31,11 @@ public class ExportServiceTests
         var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "clients.csv");
         
         //Act
-        _exportService.ExportData(clients, filePath);
+        _exportService.ExportToCsv(clients, filePath);
         
         //Assert
         File.Exists(filePath).Should().BeTrue(); 
-        var importedClients = _exportService.ImportData(filePath); 
+        var importedClients = _exportService.ImportFromCsv(filePath); 
         File.Delete(filePath);
         importedClients.Should().Contain(clients);
     }
@@ -46,10 +46,10 @@ public class ExportServiceTests
         //Arrange
         var generatedClients = _testDataGenerator.GenerateClients(1);
         var filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "clients.csv");
-        _exportService.ExportData(generatedClients, filePath);
+        _exportService.ExportToCsv(generatedClients, filePath);
         
         //Act
-        var clients = _exportService.ImportData(filePath);
+        var clients = _exportService.ImportFromCsv(filePath);
         
         //Assert
         File.Delete(filePath);

@@ -8,7 +8,7 @@ namespace ExportTool;
 
 public class ExportService <TEntity> where TEntity : class
 {
-    public void ExportData(IEnumerable<TEntity> entities, string filePath)
+    public void ExportToCsv(IEnumerable<TEntity> entities, string filePath)
     {
         using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
         {
@@ -24,7 +24,7 @@ public class ExportService <TEntity> where TEntity : class
         }
     }
 
-    public IEnumerable<TEntity> ImportData(string filePath)
+    public IEnumerable<TEntity> ImportFromCsv(string filePath)
     {
         using (var fileStream = new FileStream(filePath, FileMode.Open))
         {
