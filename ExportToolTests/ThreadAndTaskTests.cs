@@ -33,8 +33,7 @@ public class ThreadAndTaskTests
         var filePath = Path.Combine(desktopPath, fileName);
 
         var maxFileSize = 60 * 1024;
-
-        // Создание потоков
+        
         var threadA = new Thread(() => SerializeClients(clientsA, filePath, maxFileSize));
         var threadB = new Thread(() => SerializeClients(clientsA, filePath, maxFileSize));
 
@@ -98,6 +97,7 @@ public class ThreadAndTaskTests
     [Fact]
     public void Test2()
     {
+        //Arrange
         var account = _testDataGenerator.GenerateAccounts().First();
         var initialAmount = account.Amount;
 
@@ -117,12 +117,14 @@ public class ThreadAndTaskTests
             }
         });
 
+        //Act
         threadA.Start();
         threadB.Start();
 
         threadA.Join();
         threadB.Join();
 
+        //Assert
         account.Amount.Should().Be(initialAmount + 100 * 20);
     }
 }
