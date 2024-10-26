@@ -1,7 +1,5 @@
 ﻿using System.Globalization;
 using System.Text.Json;
-using BankSystem.App.Interfaces;
-using BankSystem.Domain.Models;
 using CsvHelper;
 
 namespace ExportTool;
