@@ -28,6 +28,7 @@ public class ThreadAndTaskTests
     {
         // Arrange
         var clientsA = _testDataGenerator.GenerateClients();
+        var clientsB = _testDataGenerator.GenerateClients();
         var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
         var fileName = "clients.json";
         var filePath = Path.Combine(desktopPath, fileName);
@@ -35,7 +36,7 @@ public class ThreadAndTaskTests
         var maxFileSize = 60 * 1024;
         
         var threadA = new Thread(() => SerializeClients(clientsA, filePath, maxFileSize));
-        var threadB = new Thread(() => SerializeClients(clientsA, filePath, maxFileSize));
+        var threadB = new Thread(() => SerializeClients(clientsB, filePath, maxFileSize));
 
         // Act
         threadA.Start();
@@ -88,14 +89,16 @@ public class ThreadAndTaskTests
             clientsList.Clear();
         }
 
-        if (clientsList.Count > 0)
+        if (clientsList.Count <= 0) return;
+        
+        lock (_lock)
         {
             _exportService.SerializeToJson(clientsList, currentFilePath);
         }
     }
 
     [Fact]
-    public void Test2()
+    public void AccountsThreadsShouldAddAmount()
     {
         //Arrange
         var account = _testDataGenerator.GenerateAccounts().First();
