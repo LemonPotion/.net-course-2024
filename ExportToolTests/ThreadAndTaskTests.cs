@@ -108,7 +108,10 @@ public class ThreadAndTaskTests
         {
             for (var i = 0; i < 10; i++)
             {
-                account.Amount += 100;
+                lock (_lock)
+                {
+                    account.Amount += 100;   
+                }
             }
         });
 
@@ -116,7 +119,10 @@ public class ThreadAndTaskTests
         {
             for (var i = 0; i < 10; i++)
             {
-                account.Amount += 100;
+                lock (_lock)
+                {
+                    account.Amount += 100;   
+                }
             }
         });
 
