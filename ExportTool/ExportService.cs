@@ -1,7 +1,5 @@
 ﻿using System.Globalization;
 using System.Text.Json;
-using BankSystem.App.Interfaces;
-using BankSystem.Domain.Models;
 using CsvHelper;
 
 namespace ExportTool;
@@ -41,14 +39,14 @@ public class ExportService <TEntity> where TEntity : class
 
     public void SerializeToJson(IEnumerable<TEntity> entities, string filePath)
     {
-        using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
+        using (var fileStream = new FileStream(filePath, FileMode.Create))
         {
             JsonSerializer.Serialize(fileStream, entities);
         }
     }
     public void SerializeToJson(TEntity entity, string filePath)
     {
-        using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
+        using (var fileStream = new FileStream(filePath, FileMode.Create))
         {
             JsonSerializer.Serialize(fileStream, entity);
         }
