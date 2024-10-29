@@ -141,7 +141,8 @@ public class ClientServiceTests
             .Excluding(a => a.Client)
             .Excluding(a => a.ClientId)
             .Excluding(a => a.CurrencyId)
-            .Excluding(a => a.Id));
+            .Excluding(a => a.Id)
+            .Excluding(a => a.UpdatedOn));
     }
 
     [Fact]

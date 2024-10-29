@@ -18,6 +18,10 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
             .HasColumnName("amount")
             .IsRequired();
 
+        builder.Property(a => a.UpdatedOn)
+            .ValueGeneratedOnUpdate()
+            .HasColumnName("updated_on");
+
         builder.HasOne<Client>(a => a.Client)
             .WithMany(c => c.Accounts)
             .HasForeignKey(a => a.ClientId);

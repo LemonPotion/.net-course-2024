@@ -13,6 +13,23 @@ public class ClientService
         _clientStorage = clientStorage;
     }
 
+    public async Task WithdrawFunds(Dictionary<Guid, decimal> withdrawalRequests, CancellationToken cancellationToken)
+    {
+        var tasks = withdrawalRequests.Select(async request =>
+        {
+            var account = await _clientStorage.GetAccountByIdAsync(request.Key, cancellationToken);
+
+            if (account.Amount >= request.Value)
+            {
+                account.Amount -= request.Value;
+                account.UpdatedOn = DateTime.UtcNow;
+                await _clientStorage.UpdateAccountAsync(account.Id, account, cancellationToken);
+            }
+        }).ToList();
+
+        await Task.WhenAll(tasks);
+    }
+
     public async Task AddAsync(Client client, CancellationToken cancellationToken)
     {
         ValidateClient(client);

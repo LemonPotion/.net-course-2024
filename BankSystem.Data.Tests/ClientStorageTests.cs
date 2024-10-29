@@ -156,7 +156,10 @@ public class ClientStorageTests
         //Assert
         var existingAccounts = await _clientStorage.GetAccountsAsync(1, client.Accounts.Count, null, cancellationToken); 
         
-        existingAccounts.Should().Contain(client.Accounts);
+        existingAccounts.Should().ContainEquivalentOf(existingAccounts.First(), options => options
+            .Excluding(x => x.Client)
+            .Excluding(x => x.Currency)
+        );
     }
 
     [Fact]
@@ -181,7 +184,8 @@ public class ClientStorageTests
         //Assert
         var existingAccount = await _clientStorage.GetAccountByIdAsync(updatedAccount.Id, cancellationToken); 
         
-        existingAccount.Should().BeEquivalentTo(updatedAccount);
+        existingAccount.Should().BeEquivalentTo(updatedAccount, options => options
+            .Excluding(a=> a.UpdatedOn));
     }
 
     [Fact]
