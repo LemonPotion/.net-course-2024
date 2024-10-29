@@ -2,12 +2,12 @@
 
 public interface IStorage<T>
 {
-    public T GetById(Guid id);
-    public List<T> Get(int pageNumber, int pageSize, Func<T, bool>? filter);
+    public Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+    public Task<List<T>> GetAsync(int pageNumber, int pageSize, Func<T, bool>? filter, CancellationToken cancellationToken);
 
-    public void Add(T item);
+    public Task AddAsync(T item, CancellationToken cancellationToken);
 
-    public void Update(Guid id, T item);
+    public Task UpdateAsync(Guid id, T item, CancellationToken cancellationToken);
 
-    public void Delete(Guid id);
+    public Task DeleteAsync(Guid id, CancellationToken cancellationToken);
 }

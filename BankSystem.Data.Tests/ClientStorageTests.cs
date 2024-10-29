@@ -20,132 +20,154 @@ public class ClientStorageTests
     }
 
     [Fact]
-    public void ClientStorageAddClientShouldAddClientWithDefaultAccount()
+    public async Task ClientStorageAddClientShouldAddClientWithDefaultAccount()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
+        var cancellationToken = new CancellationTokenSource().Token;
 
         //Act
-        _clientStorage.Add(client);
+        await _clientStorage.AddAsync(client, cancellationToken);
 
         //Assert
-        _clientStorage.GetById(client.Id).Should().BeEquivalentTo(client);
+        var existingClient = await _clientStorage.GetByIdAsync(client.Id, cancellationToken); 
+        
+        existingClient.Should().BeEquivalentTo(client);
     }
 
     [Fact]
-    public void ClientStorageGetPagedShouldReturnClients()
+    public async Task ClientStorageGetPagedShouldReturnClients()
     {
         //Arrange
         var clients = _testDataGenerator.GenerateClients(1).First();
+        var cancellationToken = new CancellationTokenSource().Token;
 
         //Act
-        var result = _clientStorage.Get(1, _bankSystemContext.Clients.Count(), null);
+        var result = await _clientStorage.GetAsync(1, _bankSystemContext.Clients.Count(), null, cancellationToken);
 
         //Assert
-        _clientStorage.Get(1, _bankSystemContext.Clients.Count(), null).Should().Contain(result);
+        var existingClients = await _clientStorage.GetAsync(1, _bankSystemContext.Clients.Count(), null, cancellationToken); 
+        
+        existingClients.Should().Contain(result);
     }
 
     [Fact]
-    public void ClientStorageGetByIdShouldReturnClient()
+    public async Task ClientStorageGetByIdShouldReturnClient()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        _clientStorage.Add(client);
-        var addedClient = _bankSystemContext.Clients.Find(client.Id);
+        var cancellationToken = new CancellationTokenSource().Token;
+        await _clientStorage.AddAsync(client, cancellationToken);
+        var addedClient = await _bankSystemContext.Clients.FindAsync(client.Id, cancellationToken);
 
         //Act
-        var result = _clientStorage.GetById(client.Id);
+        var result = await _clientStorage.GetByIdAsync(client.Id, cancellationToken);
 
         //Assert
         result.Should().BeEquivalentTo(addedClient);
     }
 
     [Fact]
-    public void ClientStorageUpdateClientShouldUpdateClient()
+    public async Task ClientStorageUpdateClientShouldUpdateClient()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
         var updatedClient = _testDataGenerator.GenerateClients(1).First();
-        _clientStorage.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        await _clientStorage.AddAsync(client, cancellationToken);
         updatedClient.Id = client.Id;
 
         //Act
-        _clientStorage.Update(updatedClient.Id, updatedClient);
+        await _clientStorage.UpdateAsync(updatedClient.Id, updatedClient, cancellationToken);
 
         //Assert
 
-        _clientStorage.GetById(client.Id).Should().Be(updatedClient);
+        var existingClient = await _clientStorage.GetByIdAsync(client.Id, cancellationToken); 
+        
+        existingClient.Should().Be(updatedClient);
     }
 
     [Fact]
-    public void ClientStorageDeleteClientShouldDeleteClient()
+    public async Task ClientStorageDeleteClientShouldDeleteClient()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        _clientStorage.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        await _clientStorage.AddAsync(client, cancellationToken);
 
 
         //Act
-        _clientStorage.Delete(client.Id);
+        await _clientStorage.DeleteAsync(client.Id, cancellationToken);
 
         //Assert
-        _clientStorage.GetById(client.Id).Should().BeNull();
+        var existingClient = await _clientStorage.GetByIdAsync(client.Id, cancellationToken); 
+        
+        existingClient.Should().BeNull();
     }
 
     [Fact]
-    public void ClientStorageAddAccountShouldAddClientAccount()
+    public async Task ClientStorageAddAccountShouldAddClientAccount()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        var account = _testDataGenerator.GenerateAccounts(1).First();
-        _clientStorage.Add(client);
+        var account = _testDataGenerator.GenerateAccounts(1).First(); 
+        var cancellationToken = new CancellationTokenSource().Token;
+        
+        await _clientStorage.AddAsync(client, cancellationToken);
         account.ClientId = client.Id;
 
 
         //Act
-        _clientStorage.AddAccount(account);
+        await _clientStorage.AddAccountAsync(account, cancellationToken);
 
         //Assert
-        _clientStorage.GetAccountById(account.Id).Should().BeEquivalentTo(account);
+        var existingAccount = await _clientStorage.GetAccountByIdAsync(account.Id, cancellationToken);
+        existingAccount.Should().BeEquivalentTo(account);
     }
 
     [Fact]
-    public void ClientStorageGetAccountByIdShouldReturnAccount()
+    public async Task ClientStorageGetAccountByIdShouldReturnAccount()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        _clientStorage.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        await _clientStorage.AddAsync(client, cancellationToken);
         var account = client.Accounts.First();
 
 
         //Act
-        var result = _clientStorage.GetAccountById(account.Id);
+        var result = await _clientStorage.GetAccountByIdAsync(account.Id, cancellationToken);
 
         //Assert
         result.Should().BeEquivalentTo(account);
     }
 
     [Fact]
-    public void ClientStorageGetAccountsPagedShouldReturnAccounts()
+    public async Task ClientStorageGetAccountsPagedShouldReturnAccounts()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        _clientStorage.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        await _clientStorage.AddAsync(client, cancellationToken);
 
         //Act
-        var result = _clientStorage.GetAccounts(1, client.Accounts.Count, null);
+        var result = await _clientStorage.GetAccountsAsync(1, client.Accounts.Count, null, cancellationToken);
 
         //Assert
-        _clientStorage.GetAccounts(1, client.Accounts.Count, null).Should().Contain(client.Accounts);
+        var existingAccounts = await _clientStorage.GetAccountsAsync(1, client.Accounts.Count, null, cancellationToken); 
+        
+        existingAccounts.Should().Contain(client.Accounts);
     }
 
     [Fact]
-    public void ClientStorageUpdateAccountShouldUpdateAccount()
+    public async Task ClientStorageUpdateAccountShouldUpdateAccount()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
         var updatedAccount = _testDataGenerator.GenerateAccounts(1).First();
-        _clientStorage.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        
+        await _clientStorage.AddAsync(client, cancellationToken);
         var account = client.Accounts.First();
         updatedAccount.Id = account.Id;
         updatedAccount.Client = account.Client;
@@ -154,24 +176,30 @@ public class ClientStorageTests
         updatedAccount.ClientId = account.ClientId;
 
         //Act
-        _clientStorage.UpdateAccount(updatedAccount.Id, updatedAccount);
+        await _clientStorage.UpdateAccountAsync(updatedAccount.Id, updatedAccount, cancellationToken);
 
         //Assert
-        _clientStorage.GetAccountById(updatedAccount.Id).Should().BeEquivalentTo(updatedAccount);
+        var existingAccount = await _clientStorage.GetAccountByIdAsync(updatedAccount.Id, cancellationToken); 
+        
+        existingAccount.Should().BeEquivalentTo(updatedAccount);
     }
 
     [Fact]
-    public void ClientStorageDeleteAccountShouldDeleteAccount()
+    public async Task ClientStorageDeleteAccountShouldDeleteAccount()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        _clientStorage.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        
+        await _clientStorage.AddAsync(client, cancellationToken);
         var account = client.Accounts.First();
 
         //Act
-        _clientStorage.DeleteAccount(account.Id);
+        await _clientStorage.DeleteAccountAsync(account.Id, cancellationToken);
 
         //Assert
-        _clientStorage.GetAccounts(1, client.Accounts.Count, null).Should().NotContain(account);
+        var existingAccounts = await _clientStorage.GetAccountsAsync(1, client.Accounts.Count, null, cancellationToken); 
+        
+        existingAccounts.Should().NotContain(account);
     }
 }

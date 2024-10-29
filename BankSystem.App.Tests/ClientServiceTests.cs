@@ -23,107 +23,120 @@ public class ClientServiceTests
     }
 
     [Fact]
-    public void ClientServiceAddClientShouldAddClient()
+    public async Task ClientServiceAddClientShouldAddClient()
     {
         //Arrange
         var clients = _testDataGenerator.GenerateClients();
         var client = clients.First();
+        var cancellationToken = new CancellationTokenSource().Token;
 
         //Act
-        _clientService.Add(client);
+         await _clientService.AddAsync(client, cancellationToken);
 
         //Assert
-        _bankSystemContext.Clients.Find(client.Id).Should().NotBeNull();
+        var existingClient = await _bankSystemContext.Clients.FindAsync(client.Id, cancellationToken);
+        
+        existingClient.Should().NotBeNull();
     }
-
+    
     [Fact]
-    public void ClientServiceGetPagedReturnsPagedClients()
+    public async Task ClientServiceGetPagedReturnsPagedClients()
     {
         //Arrange
         var clients = _testDataGenerator.GenerateClients();
-
+        var cancellationToken = new CancellationTokenSource().Token;
+        
         foreach (var item in clients)
         {
-            _clientService.Add(item);
+            await _clientService.AddAsync(item, cancellationToken);
         }
 
         //Act
-        var filteredClients = _clientService.GetPaged(1, clients.Count, null);
+        var filteredClients = _clientService.GetPagedAsync(1, clients.Count, null, cancellationToken);
 
         //Assert
         filteredClients.Should().NotBeNull();
     }
 
     [Fact]
-    public void ClientServiceUpdateClientShouldUpdateClient()
+    public async Task ClientServiceUpdateClientShouldUpdateClient()
     {
         //Arrange
         var clients = _testDataGenerator.GenerateClients();
         var client = clients.First();
         var updatedClient = clients.Last();
-
-        _clientService.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        
+        await _clientService.AddAsync(client, cancellationToken);
         updatedClient.Id = client.Id;
 
         //Act
-        _clientService.Update(updatedClient.Id, updatedClient);
+        await _clientService.UpdateAsync(updatedClient.Id, updatedClient, cancellationToken);
 
         //Assert
         client.Should().BeEquivalentTo(updatedClient);
     }
 
     [Fact]
-    public void ClientServiceDeleteClientShouldDeleteClient()
+    public async Task ClientServiceDeleteClientShouldDeleteClient()
     {
         //Arrange
         var clients = _testDataGenerator.GenerateClients();
         var client = clients.First();
+        var cancellationToken = new CancellationTokenSource().Token;
 
-        _clientService.Add(client);
+        await _clientService.AddAsync(client, cancellationToken);
 
         //Act
-        _clientService.Delete(client.Id);
+        await _clientService.DeleteAsync(client.Id, cancellationToken);
 
         //Assert
-        _clientStorage.Get(1, clients.Count, null).Should().NotContain(client);
+        var existingClients = await _clientStorage.GetAsync(1, clients.Count, null, cancellationToken); 
+        existingClients.Should().NotContain(client);
     }
 
     [Fact]
-    public void ClientServiceAddClientAccountShouldAddAccount()
+    public async Task ClientServiceAddClientAccountShouldAddAccount()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
         var account = _testDataGenerator.GenerateAccounts(1).First();
-
-        _clientService.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        
+        await _clientService.AddAsync(client, cancellationToken);
         account.ClientId = client.Id;
 
         //Act
-        _clientService.AddAccount(account);
-        var a = _bankSystemContext.Accounts.Find(account.Id);
+        await _clientService.AddAccountAsync(account, cancellationToken);
+        
         //Assert
-        _bankSystemContext.Accounts.Find(account.Id).Should().BeEquivalentTo(account, options => options
+        var existingClient = await _bankSystemContext.Accounts.FindAsync(account.Id);
+        
+        existingClient.Should().BeEquivalentTo(account, options => options
             .Excluding(a => a.Currency)
             .Excluding(a => a.Client));
     }
 
     [Fact]
-    public void ClientServiceUpdateClientAccountShouldUpdateAccount()
+    public async Task ClientServiceUpdateClientAccountShouldUpdateAccount()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
         var account = _testDataGenerator.GenerateAccounts(1).First();
         var updatedAccount = _testDataGenerator.GenerateAccounts(1).First();
-
-        _clientService.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        
+        await _clientService.AddAsync(client, cancellationToken);
         account.ClientId = client.Id;
-        _clientService.AddAccount(account);
+        await _clientService.AddAccountAsync(account, cancellationToken);
         updatedAccount.Id = account.Id;
         //Act
-        _clientService.UpdateAccount(updatedAccount.Id, updatedAccount);
+        await _clientService.UpdateAccountAsync(updatedAccount.Id, updatedAccount, cancellationToken);
 
         //Assert
-        _bankSystemContext.Find<Account>(account.Id).Should().BeEquivalentTo(updatedAccount, options => options
+        var existingAccount = await _bankSystemContext.FindAsync<Account>(account.Id);
+        
+        existingAccount.Should().BeEquivalentTo(updatedAccount, options => options
             .Excluding(a => a.Currency)
             .Excluding(a => a.Client)
             .Excluding(a => a.ClientId)
@@ -132,21 +145,24 @@ public class ClientServiceTests
     }
 
     [Fact]
-    public void ClientServiceDeleteClientAccountShouldDeleteAccount()
+    public async Task ClientServiceDeleteClientAccountShouldDeleteAccount()
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients().First();
         var accounts = _testDataGenerator.GenerateAccounts();
         var account = accounts.First();
-
-        _clientService.Add(client);
+        var cancellationToken = new CancellationTokenSource().Token;
+        
+        await _clientService.AddAsync(client, cancellationToken);
         account.ClientId = client.Id;
-        _clientService.AddAccount(account);
+        await _clientService.AddAccountAsync(account, cancellationToken);
 
         //Act
-        _clientService.DeleteAccount(account.Id);
+        await _clientService.DeleteAccountAsync(account.Id, cancellationToken);
 
         //Assert
-        _clientStorage.GetAccounts(1, accounts.Count, null).Should().NotContain(account);
+        var existingAccounts = await _clientStorage.GetAccountsAsync(1, accounts.Count, null, cancellationToken);
+        
+        existingAccounts.Should().NotContain(account);
     }
 }

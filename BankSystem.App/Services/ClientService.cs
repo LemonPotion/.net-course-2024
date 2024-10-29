@@ -13,60 +13,60 @@ public class ClientService
         _clientStorage = clientStorage;
     }
 
-    public void Add(Client client)
+    public async Task AddAsync(Client client, CancellationToken cancellationToken)
     {
         ValidateClient(client);
 
-        _clientStorage.Add(client);
+        await _clientStorage.AddAsync(client, cancellationToken);
     }
 
-    public List<Client> GetPaged(int pageNumber, int pageSize, Func<Client, bool>? filter)
+    public async Task<List<Client>> GetPagedAsync(int pageNumber, int pageSize, Func<Client, bool>? filter, CancellationToken cancellationToken)
     {
-        return _clientStorage.Get(pageNumber, pageSize, filter);
+        return await _clientStorage.GetAsync(pageNumber, pageSize, filter, cancellationToken);
     }
 
-    public Client GetById(Guid id)
+    public async Task<Client> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return _clientStorage.GetById(id);
+        return await _clientStorage.GetByIdAsync(id, cancellationToken);
     }
 
-    public void Update(Guid id,Client client)
+    public async Task UpdateAsync(Guid id,Client client, CancellationToken cancellationToken)
     {
         ValidateClient(client);
-        _clientStorage.Update(id, client);
+        await _clientStorage.UpdateAsync(id, client, cancellationToken);
     }
 
-    public void Delete(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        ValidateClient(GetById(id));
-        _clientStorage.Delete(id);
+         ValidateClient(await GetByIdAsync(id, cancellationToken));
+        await _clientStorage.DeleteAsync(id, cancellationToken);
     }
 
-    public void AddAccount(Account account)
+    public async Task AddAccountAsync(Account account, CancellationToken cancellationToken)
     {
-        _clientStorage.AddAccount(account);
+        await _clientStorage.AddAccountAsync(account, cancellationToken);
     }
 
-    public Account GetAccountById(Guid id)
+    public async Task<Account> GetAccountByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return _clientStorage.GetAccountById(id);
+        return await _clientStorage.GetAccountByIdAsync(id, cancellationToken);
     }
 
-    public List<Account> GetAccountsPaged(int pageNumber, int pageSize, Guid clientId, Func<Account, bool>? filter)
+    public async Task<List<Account>> GetAccountsPagedAsync(int pageNumber, int pageSize, Guid clientId, Func<Account, bool>? filter, CancellationToken cancellationToken)
     {
-        var client = GetById(clientId);
+        var client = await GetByIdAsync(clientId, cancellationToken);
         ValidateClient(client);
-        return _clientStorage.GetAccounts(pageNumber, pageSize, filter);
+        return await _clientStorage.GetAccountsAsync(pageNumber, pageSize, filter, cancellationToken);
     }
 
-    public void UpdateAccount(Guid id, Account account)
+    public async Task UpdateAccountAsync(Guid id, Account account, CancellationToken cancellationToken)
     {
-        _clientStorage.UpdateAccount(id, account);
+        await _clientStorage.UpdateAccountAsync(id, account, cancellationToken);
     }
 
-    public void DeleteAccount(Guid id)
+    public async Task DeleteAccountAsync(Guid id, CancellationToken cancellationToken)
     {
-        _clientStorage.DeleteAccount(id);
+        await _clientStorage.DeleteAccountAsync(id, cancellationToken);
     }
 
     private static void ValidateClient(Client client)

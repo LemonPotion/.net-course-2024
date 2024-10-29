@@ -13,32 +13,32 @@ public class EmployeeService
         _employeeStorage = employeeStorage;
     }
 
-    public void Add(Employee employee)
+    public async Task AddAsync(Employee employee, CancellationToken cancellationToken)
     {
         ValidateEmployee(employee);
 
-        _employeeStorage.Add(employee);
+        await _employeeStorage.AddAsync(employee, cancellationToken);
     }
 
-    public Employee GetById(Guid id)
+    public async Task<Employee> GetByIdASync(Guid id, CancellationToken cancellationToken)
     {
-        return _employeeStorage.GetById(id);
+        return await _employeeStorage.GetByIdAsync(id, cancellationToken);
     }
 
-    public IEnumerable<Employee> GetPaged(int pageNumber, int pageSize, Func<Employee, bool>? filter)
+    public async Task<IEnumerable<Employee>> GetPagedAsync(int pageNumber, int pageSize, Func<Employee, bool>? filter, CancellationToken cancellationToken)
     {
-        return _employeeStorage.Get(pageNumber, pageSize, filter);
+        return await _employeeStorage.GetAsync(pageNumber, pageSize, filter, cancellationToken);
     }
 
-    public void Update(Guid id, Employee employee)
+    public async Task UpdateAsync(Guid id, Employee employee, CancellationToken cancellationToken)
     {
         ValidateEmployee(employee);
-        _employeeStorage.Update(id, employee);
+        await _employeeStorage.UpdateAsync(id, employee, cancellationToken);
     }
 
-    public void Delete(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        _employeeStorage.Delete(id);
+        await _employeeStorage.DeleteAsync(id, cancellationToken);
     }
 
     private static void ValidateEmployee(Employee employee)

@@ -1,6 +1,7 @@
 ﻿using BankSystem.App.Interfaces;
 using BankSystem.Data.EntityFramework;
 using BankSystem.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BankSystem.Data.Storages;
 
@@ -13,103 +14,103 @@ public class ClientStorage : IClientStorage
         _bankSystemContext = bankSystemContext;
     }
 
-    public void Add(Client client)
+    public async Task AddAsync(Client client, CancellationToken cancellationToken)
     {
-        var account = GetDefaultAccount();
+        var account = await GetDefaultAccount(cancellationToken);
 
-        _bankSystemContext.Clients.Add(client);
+        await _bankSystemContext.Clients.AddAsync(client, cancellationToken);
         account.ClientId = client.Id;
-        _bankSystemContext.Accounts.Add(account);
+        await _bankSystemContext.Accounts.AddAsync(account, cancellationToken);
 
-        _bankSystemContext.SaveChanges();
+        await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
 
-    public List<Client> Get(int pageNumber, int pageSize, Func<Client, bool>? filter)
+    public async Task<List<Client>> GetAsync(int pageNumber, int pageSize, Func<Client, bool>? filter, CancellationToken cancellationToken)
     {
-        var items = _bankSystemContext.Clients.AsEnumerable();
+        var items = _bankSystemContext.Clients.AsQueryable();
 
         if (filter is not null)
         {
-            items = items.Where(filter);
+            items = items.AsEnumerable().Where(filter).AsQueryable();
         }
 
-        return items
+        return await items
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .ToList();
+            .ToListAsync(cancellationToken);
     }
 
-    public Client GetById(Guid id)
+    public async Task<Client> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return _bankSystemContext.Find<Client>(id);
+        return await _bankSystemContext.FindAsync<Client>(id, cancellationToken);
     }
 
-    public void Update(Guid id, Client employee)
+    public async Task UpdateAsync(Guid id, Client employee, CancellationToken cancellationToken)
     {
-        var existingclient = GetById(employee.Id);
+        var existingClient = await GetByIdAsync(employee.Id, cancellationToken);
 
         if (employee is null) return;
 
-        existingclient.FirstName = employee.FirstName;
-        existingclient.LastName = employee.LastName;
-        existingclient.PhoneNumber = employee.PhoneNumber;
-        existingclient.BankAccountNumber = employee.BankAccountNumber;
-        existingclient.Email = employee.Email;
-        existingclient.BirthDay = employee.BirthDay;
-        existingclient.PassportNumber = employee.PassportNumber;
+        existingClient.FirstName = employee.FirstName;
+        existingClient.LastName = employee.LastName;
+        existingClient.PhoneNumber = employee.PhoneNumber;
+        existingClient.BankAccountNumber = employee.BankAccountNumber;
+        existingClient.Email = employee.Email;
+        existingClient.BirthDay = employee.BirthDay;
+        existingClient.PassportNumber = employee.PassportNumber;
 
-        _bankSystemContext.SaveChanges();
+        await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
 
-    public void Delete(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var client = _bankSystemContext.Clients.Find(id);
+        var client = await _bankSystemContext.Clients.FindAsync(id, cancellationToken);
 
         if (client is null) return;
 
         _bankSystemContext.Remove(client);
 
-        _bankSystemContext.SaveChanges();
+        await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
 
 
-    public void AddAccount(Account account)
+    public async Task AddAccountAsync(Account account, CancellationToken cancellationToken)
     {
-        if (GetById(account.ClientId) is null) return;
+        if (GetByIdAsync(account.ClientId, cancellationToken) is null) return;
 
-        _bankSystemContext.Accounts.Add(account);
+        await _bankSystemContext.Accounts.AddAsync(account, cancellationToken);
 
-        _bankSystemContext.SaveChanges();
+        await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
 
-    public Account GetAccountById(Guid accountId)
+    public async Task<Account> GetAccountByIdAsync(Guid accountId, CancellationToken cancellationToken)
     {
-        return _bankSystemContext.Accounts.Find(accountId);
+        return await _bankSystemContext.Accounts.FindAsync(accountId, cancellationToken);
     }
 
-    public List<Account> GetAccounts(int pageNumber, int pageSize, Func<Account, bool>? filter)
+    public async Task<List<Account>> GetAccountsAsync(int pageNumber, int pageSize, Func<Account, bool>? filter, CancellationToken cancellationToken)
     {
-        var accounts = _bankSystemContext.Accounts.AsEnumerable();
+        var accounts = _bankSystemContext.Accounts.AsQueryable();
         if (filter is not null)
         {
-            accounts = accounts.Where(filter);
+            accounts = accounts.AsEnumerable().Where(filter).AsQueryable();
         }
 
-        return accounts
+        return await accounts
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .ToList();
+            .ToListAsync(cancellationToken);
     }
 
-    private Account GetDefaultAccount()
+    private async Task<Account> GetDefaultAccount(CancellationToken cancellationToken)
     {
-        var currency = _bankSystemContext.Currencies.FirstOrDefault(c => c.Code == "USD");
+        var currency = await _bankSystemContext.Currencies.FirstOrDefaultAsync(c => c.Code == "USD", cancellationToken);
 
         if (currency == null)
         {
             currency = new Currency("$", "United States dollar", "USD");
             _bankSystemContext.Currencies.Add(currency);
-            _bankSystemContext.SaveChanges();
+            await _bankSystemContext.SaveChangesAsync(cancellationToken);
         }
 
         return new Account
@@ -119,9 +120,9 @@ public class ClientStorage : IClientStorage
         };
     }
 
-    public void UpdateAccount(Guid id, Account account)
+    public async Task UpdateAccountAsync(Guid id, Account account, CancellationToken cancellationToken)
     {
-        var originalAccount = _bankSystemContext.Accounts.Find(account.Id);
+        var originalAccount = await _bankSystemContext.Accounts.FindAsync(account.Id, cancellationToken);
 
         if (originalAccount is null) return;
 
@@ -129,18 +130,19 @@ public class ClientStorage : IClientStorage
 
         _bankSystemContext.Update(originalAccount);
 
-        _bankSystemContext.SaveChanges();
+        await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
 
-    public void DeleteAccount(Guid accountId)
+    public async Task DeleteAccountAsync(Guid accountId, CancellationToken cancellationToken)
     {
-        var account = _bankSystemContext.Accounts.Find(accountId);
+        var account = await _bankSystemContext.Accounts.FindAsync(
+            accountId, cancellationToken);
 
         if (account is null) return;
 
         _bankSystemContext.Remove(account);
 
-        _bankSystemContext.SaveChanges();
+        await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
     
     public Client GetYoungestClient()
