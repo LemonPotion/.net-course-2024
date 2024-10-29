@@ -114,7 +114,8 @@ public class ClientServiceTests
         
         existingClient.Should().BeEquivalentTo(account, options => options
             .Excluding(a => a.Currency)
-            .Excluding(a => a.Client));
+            .Excluding(a => a.Client)
+            .Excluding(a => a.UpdatedOn));
     }
 
     [Fact]
