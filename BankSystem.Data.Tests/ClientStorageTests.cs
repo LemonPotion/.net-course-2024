@@ -24,7 +24,8 @@ public class ClientStorageTests
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
 
         //Act
         await _clientStorage.AddAsync(client, cancellationToken);
@@ -40,7 +41,8 @@ public class ClientStorageTests
     {
         //Arrange
         var clients = _testDataGenerator.GenerateClients(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
 
         //Act
         var result = await _clientStorage.GetAsync(1, _bankSystemContext.Clients.Count(), null, cancellationToken);
@@ -56,7 +58,8 @@ public class ClientStorageTests
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         await _clientStorage.AddAsync(client, cancellationToken);
         var addedClient = await _bankSystemContext.Clients.FindAsync(client.Id, cancellationToken);
 
@@ -73,7 +76,8 @@ public class ClientStorageTests
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
         var updatedClient = _testDataGenerator.GenerateClients(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         await _clientStorage.AddAsync(client, cancellationToken);
         updatedClient.Id = client.Id;
 
@@ -92,7 +96,8 @@ public class ClientStorageTests
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         await _clientStorage.AddAsync(client, cancellationToken);
 
 
@@ -111,7 +116,8 @@ public class ClientStorageTests
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
         var account = _testDataGenerator.GenerateAccounts(1).First(); 
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         
         await _clientStorage.AddAsync(client, cancellationToken);
         account.ClientId = client.Id;
@@ -130,7 +136,8 @@ public class ClientStorageTests
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         await _clientStorage.AddAsync(client, cancellationToken);
         var account = client.Accounts.First();
 
@@ -147,7 +154,8 @@ public class ClientStorageTests
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         await _clientStorage.AddAsync(client, cancellationToken);
 
         //Act
@@ -168,7 +176,8 @@ public class ClientStorageTests
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
         var updatedAccount = _testDataGenerator.GenerateAccounts(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         
         await _clientStorage.AddAsync(client, cancellationToken);
         var account = client.Accounts.First();
@@ -193,7 +202,8 @@ public class ClientStorageTests
     {
         //Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         
         await _clientStorage.AddAsync(client, cancellationToken);
         var account = client.Accounts.First();

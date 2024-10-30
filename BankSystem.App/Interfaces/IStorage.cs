@@ -1,9 +1,11 @@
-﻿namespace BankSystem.App.Interfaces;
+﻿using System.Linq.Expressions;
+
+namespace BankSystem.App.Interfaces;
 
 public interface IStorage<T>
 {
     public Task<T> GetByIdAsync(Guid id, CancellationToken cancellationToken);
-    public Task<List<T>> GetAsync(int pageNumber, int pageSize, Func<T, bool>? filter, CancellationToken cancellationToken);
+    public Task<List<T>> GetAsync(int pageNumber, int pageSize, Expression<Func<T, bool>>? filter, CancellationToken cancellationToken);
 
     public Task AddAsync(T item, CancellationToken cancellationToken);
 

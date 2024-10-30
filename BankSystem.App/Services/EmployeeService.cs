@@ -1,4 +1,5 @@
-﻿using BankSystem.App.Exceptions;
+﻿using System.Linq.Expressions;
+using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 
@@ -25,7 +26,7 @@ public class EmployeeService
         return await _employeeStorage.GetByIdAsync(id, cancellationToken);
     }
 
-    public async Task<IEnumerable<Employee>> GetPagedAsync(int pageNumber, int pageSize, Func<Employee, bool>? filter, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Employee>> GetPagedAsync(int pageNumber, int pageSize, Expression<Func<Employee, bool>>? filter, CancellationToken cancellationToken)
     {
         return await _employeeStorage.GetAsync(pageNumber, pageSize, filter, cancellationToken);
     }

@@ -27,7 +27,8 @@ public class RateUpdaterTests
         // Arrange
         var client = _testDataGenerator.GenerateClients(1).First();
         var account = _testDataGenerator.GenerateAccounts(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
 
         account.UpdatedOn = DateTime.UtcNow.AddDays(-31);
         account.Amount = 100M;

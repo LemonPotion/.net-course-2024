@@ -1,4 +1,5 @@
-﻿using BankSystem.App.Exceptions;
+﻿using System.Linq.Expressions;
+using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 
@@ -13,21 +14,16 @@ public class ClientService
         _clientStorage = clientStorage;
     }
 
-    public async Task WithdrawFunds(Dictionary<Guid, decimal> withdrawalRequests, CancellationToken cancellationToken)
+    public async Task WithdrawFundsAsync(Guid accountId, decimal amount, CancellationToken cancellationToken)
     {
-        var tasks = withdrawalRequests.Select(async request =>
+        var account = await _clientStorage.GetAccountByIdAsync(accountId, cancellationToken);
+
+        if (account != null && account.Amount >= amount)
         {
-            var account = await _clientStorage.GetAccountByIdAsync(request.Key, cancellationToken);
-
-            if (account.Amount >= request.Value)
-            {
-                account.Amount -= request.Value;
-                account.UpdatedOn = DateTime.UtcNow;
-                await _clientStorage.UpdateAccountAsync(account.Id, account, cancellationToken);
-            }
-        }).ToList();
-
-        await Task.WhenAll(tasks);
+            account.Amount -= amount;
+            account.UpdatedOn = DateTime.UtcNow;
+            await _clientStorage.UpdateAccountAsync(account.Id, account, cancellationToken);
+        }
     }
 
     public async Task AddAsync(Client client, CancellationToken cancellationToken)
@@ -37,7 +33,7 @@ public class ClientService
         await _clientStorage.AddAsync(client, cancellationToken);
     }
 
-    public async Task<List<Client>> GetPagedAsync(int pageNumber, int pageSize, Func<Client, bool>? filter, CancellationToken cancellationToken)
+    public async Task<List<Client>> GetPagedAsync(int pageNumber, int pageSize, Expression<Func<Client, bool>>? filter, CancellationToken cancellationToken)
     {
         return await _clientStorage.GetAsync(pageNumber, pageSize, filter, cancellationToken);
     }
@@ -69,7 +65,7 @@ public class ClientService
         return await _clientStorage.GetAccountByIdAsync(id, cancellationToken);
     }
 
-    public async Task<List<Account>> GetAccountsPagedAsync(int pageNumber, int pageSize, Guid clientId, Func<Account, bool>? filter, CancellationToken cancellationToken)
+    public async Task<List<Account>> GetAccountsPagedAsync(int pageNumber, int pageSize, Guid clientId, Expression<Func<Account, bool>>? filter, CancellationToken cancellationToken)
     {
         var client = await GetByIdAsync(clientId, cancellationToken);
         ValidateClient(client);

@@ -1,4 +1,5 @@
-﻿using BankSystem.App.Interfaces;
+﻿using System.Linq.Expressions;
+using BankSystem.App.Interfaces;
 using BankSystem.Data.EntityFramework;
 using BankSystem.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -25,13 +26,13 @@ public class ClientStorage : IClientStorage
         await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<List<Client>> GetAsync(int pageNumber, int pageSize, Func<Client, bool>? filter, CancellationToken cancellationToken)
+    public async Task<List<Client>> GetAsync(int pageNumber, int pageSize, Expression<Func<Client, bool>>? filter, CancellationToken cancellationToken)
     {
         var items = _bankSystemContext.Clients.AsQueryable();
 
         if (filter is not null)
         {
-            items = items.AsEnumerable().Where(filter).AsQueryable();
+            items = items.Where(filter);
         }
 
         return await items
@@ -88,12 +89,12 @@ public class ClientStorage : IClientStorage
         return await _bankSystemContext.Accounts.FindAsync(accountId, cancellationToken);
     }
 
-    public async Task<List<Account>> GetAccountsAsync(int pageNumber, int pageSize, Func<Account, bool>? filter, CancellationToken cancellationToken)
+    public async Task<List<Account>> GetAccountsAsync(int pageNumber, int pageSize, Expression<Func<Account, bool>>? filter, CancellationToken cancellationToken)
     {
         var accounts = _bankSystemContext.Accounts.AsQueryable();
         if (filter is not null)
         {
-            accounts = accounts.AsEnumerable().Where(filter).AsQueryable();
+            accounts = accounts.Where(filter);
         }
 
         return await accounts

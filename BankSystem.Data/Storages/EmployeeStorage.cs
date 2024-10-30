@@ -1,4 +1,5 @@
-﻿using BankSystem.App.Interfaces;
+﻿using System.Linq.Expressions;
+using BankSystem.App.Interfaces;
 using BankSystem.Data.EntityFramework;
 using BankSystem.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -26,12 +27,12 @@ public class EmployeeStorage : IStorage<Employee>
         return await _bankSystemContext.Employees.FindAsync(id, cancellationToken);
     }
 
-    public async Task<List<Employee>> GetAsync(int pageNumber, int pageSize, Func<Employee, bool>? filter, CancellationToken cancellationToken)
+    public async Task<List<Employee>> GetAsync(int pageNumber, int pageSize, Expression<Func<Employee, bool>>? filter, CancellationToken cancellationToken)
     {
         var items = _bankSystemContext.Employees.AsQueryable();
         if (filter is not null)
         {
-            items = items.AsEnumerable().Where(filter).AsQueryable();
+            items = items.Where(filter);
         }
 
         return await items

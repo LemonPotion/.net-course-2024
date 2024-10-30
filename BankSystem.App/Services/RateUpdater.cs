@@ -8,6 +8,7 @@ public class RateUpdater : BackgroundService
     private readonly IClientStorage _clientStorage;
     private readonly TimeSpan _timeSpan;
     private readonly decimal _rate;
+    private const int MonthDays = 30 ;
     
     public RateUpdater(IClientStorage clientStorage, TimeSpan timeSpan, decimal rate)
     {
@@ -30,7 +31,7 @@ public class RateUpdater : BackgroundService
         var currentTime = DateTime.UtcNow;
         var accounts = await _clientStorage.GetAccountsAsync(1, int.MaxValue, null, cancellationToken);
         
-        foreach (var account in accounts.Where(account => (currentTime - account.UpdatedOn).TotalDays >= 30))
+        foreach (var account in accounts.Where(account => (currentTime - account.UpdatedOn).TotalDays >= MonthDays))
         {
             account.Amount *= _rate;
             

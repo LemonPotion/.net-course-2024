@@ -1,4 +1,5 @@
-﻿using BankSystem.Domain.Models;
+﻿using System.Linq.Expressions;
+using BankSystem.Domain.Models;
 
 namespace BankSystem.App.Interfaces;
 
@@ -12,5 +13,5 @@ public interface IClientStorage : IStorage<Client>
 
     public Task<Account> GetAccountByIdAsync(Guid accountId, CancellationToken cancellationToken);
 
-    public Task<List<Account>> GetAccountsAsync(int pageNumber, int pageSize, Func<Account, bool>? filter, CancellationToken cancellationToken);
+    public Task<List<Account>> GetAccountsAsync(int pageNumber, int pageSize, Expression<Func<Account, bool>>? filter, CancellationToken cancellationToken);
 }

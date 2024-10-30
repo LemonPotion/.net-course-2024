@@ -24,7 +24,8 @@ public class EmployeeStorageTests
     {
         //Arrange
         var employee = _testDataGenerator.GenerateEmployees(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         
         //Act
         await _employeeStorage.AddAsync(employee, cancellationToken);
@@ -40,7 +41,8 @@ public class EmployeeStorageTests
     {
         //Arrange
         var employee = _testDataGenerator.GenerateEmployees(1).First();
-        var cancellationToken = new CancellationTokenSource().Token; 
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         await _employeeStorage.AddAsync(employee, cancellationToken);
 
         //Act
@@ -57,7 +59,8 @@ public class EmployeeStorageTests
     {
         //Arrange
         var employee = _testDataGenerator.GenerateEmployees(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         await _employeeStorage.AddAsync(employee, cancellationToken);
 
         //Act
@@ -75,7 +78,8 @@ public class EmployeeStorageTests
         //Arrange
         var employee = _testDataGenerator.GenerateEmployees(1).First();
         var updatedEmployee = _testDataGenerator.GenerateEmployees(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         await _employeeStorage.AddAsync(employee, cancellationToken);
         updatedEmployee.Id = employee.Id;
 
@@ -93,7 +97,8 @@ public class EmployeeStorageTests
     {
         //Arrange
         var employee = _testDataGenerator.GenerateEmployees(1).First();
-        var cancellationToken = new CancellationTokenSource().Token;
+        using var cancellationTokenSource = new CancellationTokenSource();
+        var cancellationToken = cancellationTokenSource.Token;
         await _employeeStorage.AddAsync(employee, cancellationToken);
 
 
