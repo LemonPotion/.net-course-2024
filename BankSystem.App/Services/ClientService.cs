@@ -1,4 +1,7 @@
 ﻿using System.Linq.Expressions;
+using AutoMapper;
+using BankSystem.App.Dto.Client.Requests;
+using BankSystem.App.Dto.Client.Responses;
 using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
@@ -8,10 +11,12 @@ namespace BankSystem.App.Services;
 public class ClientService
 {
     private readonly IClientStorage _clientStorage;
+    private readonly IMapper _mapper;
 
-    public ClientService(IClientStorage clientStorage)
+    public ClientService(IClientStorage clientStorage, IMapper mapper)
     {
         _clientStorage = clientStorage;
+        _mapper = mapper;
     }
 
     public async Task WithdrawFundsAsync(Guid accountId, decimal amount, CancellationToken cancellationToken)
@@ -26,32 +31,42 @@ public class ClientService
         }
     }
 
-    public async Task AddAsync(Client client, CancellationToken cancellationToken)
+    public async Task AddAsync(CreateClientRequest request, CancellationToken cancellationToken)
     {
+        var client = _mapper.Map<Client>(request);
+        
         ValidateClient(client);
 
         await _clientStorage.AddAsync(client, cancellationToken);
     }
 
-    public async Task<List<Client>> GetPagedAsync(int pageNumber, int pageSize, Expression<Func<Client, bool>>? filter, CancellationToken cancellationToken)
+    public async Task<IEnumerable<GetClientByIdResponse>> GetPagedAsync(GetAllClientsPagedRequest request, CancellationToken cancellationToken)
     {
-        return await _clientStorage.GetAsync(pageNumber, pageSize, filter, cancellationToken);
+        var filter = _mapper.Map<Expression<Func<Client, bool>>>(request.Filter);
+        var clients = await _clientStorage.GetAsync(request.Pagination.PageNumber, request.Pagination.PageSize, filter, cancellationToken);
+
+        return _mapper.Map<List<GetClientByIdResponse>>(clients);
     }
 
-    public async Task<Client> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<GetClientByIdResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await _clientStorage.GetByIdAsync(id, cancellationToken);
+        var client = await _clientStorage.GetByIdAsync(id, cancellationToken);
+
+        return _mapper.Map<GetClientByIdResponse>(client);
     }
 
-    public async Task UpdateAsync(Guid id,Client client, CancellationToken cancellationToken)
+    public async Task UpdateAsync(UpdateClientRequest request,CancellationToken cancellationToken)
     {
+        var client = _mapper.Map<Client>(request);
+        
         ValidateClient(client);
-        await _clientStorage.UpdateAsync(id, client, cancellationToken);
+        await _clientStorage.UpdateAsync(client.Id, client, cancellationToken);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-         ValidateClient(await GetByIdAsync(id, cancellationToken));
+        var client = await _clientStorage.GetByIdAsync(id, cancellationToken);
+        ValidateClient(client);
         await _clientStorage.DeleteAsync(id, cancellationToken);
     }
 
@@ -67,7 +82,7 @@ public class ClientService
 
     public async Task<List<Account>> GetAccountsPagedAsync(int pageNumber, int pageSize, Guid clientId, Expression<Func<Account, bool>>? filter, CancellationToken cancellationToken)
     {
-        var client = await GetByIdAsync(clientId, cancellationToken);
+        var client = await _clientStorage.GetByIdAsync(clientId, cancellationToken);
         ValidateClient(client);
         return await _clientStorage.GetAccountsAsync(pageNumber, pageSize, filter, cancellationToken);
     }

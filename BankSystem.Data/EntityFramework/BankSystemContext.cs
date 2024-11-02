@@ -14,14 +14,19 @@ public class BankSystemContext : DbContext
 
     public DbSet<Currency> Currencies => Set<Currency>();
 
+    public BankSystemContext()
+    {
+        
+    }
+    
+    public BankSystemContext(DbContextOptions<BankSystemContext> options) : base(options)
+    {
+        
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=mysecretpassword; Database=postgres;");
     }
 }

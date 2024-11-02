@@ -1,7 +1,6 @@
 ﻿using BankSystem.App.Services;
 using BankSystem.Data.EntityFramework;
 using BankSystem.Data.Storages;
-using BankSystem.Domain.Models;
 using FluentAssertions;
 using Xunit;
 

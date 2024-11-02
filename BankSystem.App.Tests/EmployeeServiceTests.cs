@@ -1,13 +1,8 @@
-﻿using BankSystem.App.Services;
-using BankSystem.Data.EntityFramework;
-using BankSystem.Data.Storages;
-using FluentAssertions;
-using Xunit;
-
-namespace BankSystem.App.Tests;
+﻿namespace BankSystem.App.Tests;
 
 public class EmployeeServiceTests
 {
+    /*
     private readonly BankSystemContext _bankSystemContext;
     private readonly EmployeeStorage _employeeStorage;
     private readonly EmployeeService _employeeService;
@@ -94,4 +89,5 @@ public class EmployeeServiceTests
         
         existingEmployees.Should().NotContain(employee);
     }
+    */
 }

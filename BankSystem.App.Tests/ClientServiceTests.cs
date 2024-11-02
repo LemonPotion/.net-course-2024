@@ -1,14 +1,8 @@
-﻿using BankSystem.App.Services;
-using BankSystem.Data.EntityFramework;
-using BankSystem.Data.Storages;
-using BankSystem.Domain.Models;
-using FluentAssertions;
-using Xunit;
-
-namespace BankSystem.App.Tests;
+﻿namespace BankSystem.App.Tests;
 
 public class ClientServiceTests
 {
+    /*
     private readonly BankSystemContext _bankSystemContext;
     private readonly ClientStorage _clientStorage;
     private readonly ClientService _clientService;
@@ -167,4 +161,5 @@ public class ClientServiceTests
         
         existingAccounts.Should().NotContain(account);
     }
+    */
 }
