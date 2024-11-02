@@ -1,16 +1,17 @@
-﻿using BankSystem.Domain.Models;
+﻿using System.Linq.Expressions;
+using BankSystem.Domain.Models;
 
 namespace BankSystem.App.Interfaces;
 
 public interface IClientStorage : IStorage<Client>
 {
-    public void AddAccount(Account account);
+    public Task AddAccountAsync(Account account, CancellationToken cancellationToken);
 
-    public void UpdateAccount(Guid id, Account account);
+    public Task UpdateAccountAsync(Guid id, Account account, CancellationToken cancellationToken);
 
-    public void DeleteAccount(Guid accountId);
+    public Task DeleteAccountAsync(Guid accountId, CancellationToken cancellationToken);
 
-    public Account GetAccountById(Guid accountId);
+    public Task<Account> GetAccountByIdAsync(Guid accountId, CancellationToken cancellationToken);
 
-    public List<Account> GetAccounts(int pageNumber, int pageSize, Func<Account, bool>? filter);
+    public Task<List<Account>> GetAccountsAsync(int pageNumber, int pageSize, Expression<Func<Account, bool>>? filter, CancellationToken cancellationToken);
 }

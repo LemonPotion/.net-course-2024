@@ -1,6 +1,8 @@
-﻿using BankSystem.App.Interfaces;
+﻿using System.Linq.Expressions;
+using BankSystem.App.Interfaces;
 using BankSystem.Data.EntityFramework;
 using BankSystem.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BankSystem.Data.Storages;
 
@@ -13,35 +15,35 @@ public class EmployeeStorage : IStorage<Employee>
         _bankSystemContext = bankSystemContext;
     }
 
-    public void Add(Employee item)
+    public async Task AddAsync(Employee item, CancellationToken cancellationToken)
     {
-        _bankSystemContext.Set<Employee>().Add(item);
+        await _bankSystemContext.Set<Employee>().AddAsync(item, cancellationToken);
 
-        _bankSystemContext.SaveChanges();
+        await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
 
-    public Employee GetById(Guid id)
+    public async Task<Employee> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return _bankSystemContext.Employees.Find(id);
+        return await _bankSystemContext.Employees.FindAsync(id, cancellationToken);
     }
 
-    public List<Employee> Get(int pageNumber, int pageSize, Func<Employee, bool>? filter)
+    public async Task<List<Employee>> GetAsync(int pageNumber, int pageSize, Expression<Func<Employee, bool>>? filter, CancellationToken cancellationToken)
     {
-        var items = _bankSystemContext.Employees.AsEnumerable();
+        var items = _bankSystemContext.Employees.AsQueryable();
         if (filter is not null)
         {
             items = items.Where(filter);
         }
 
-        return items
+        return await items
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
-            .ToList();
+            .ToListAsync(cancellationToken);
     }
 
-    public void Update(Guid id, Employee employee)
+    public async Task UpdateAsync(Guid id, Employee employee, CancellationToken cancellationToken)
     {
-        var existingEmployee = _bankSystemContext.Employees.Find(id);
+        var existingEmployee = await _bankSystemContext.Employees.FindAsync(id, cancellationToken);
 
         if (employee is null) return;
 
@@ -54,17 +56,17 @@ public class EmployeeStorage : IStorage<Employee>
         existingEmployee.Email = employee.Email;
         existingEmployee.PassportNumber = employee.PassportNumber;
 
-        _bankSystemContext.SaveChanges();
+        await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
 
-    public void Delete(Guid id)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var employee = GetById(id);
+        var employee = await GetByIdAsync(id, cancellationToken);
 
         if (employee is null) return;
 
         _bankSystemContext.Employees.Remove(employee);
-        _bankSystemContext.SaveChanges();
+        await _bankSystemContext.SaveChangesAsync(cancellationToken);
     }
     
     public Employee GetYoungestEmployee()

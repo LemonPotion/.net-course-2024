@@ -22,68 +22,76 @@ public class EmployeeServiceTests
     }
 
     [Fact]
-    public void EmployeeServiceAddEmployeeShouldAddEmployee()
+    public async Task EmployeeServiceAddEmployeeShouldAddEmployee()
     {
         //Arrange
         var employees = _testDataGenerator.GenerateEmployees();
-
+        var cancellationToken = new CancellationTokenSource().Token;
+        
         //Act
-        _employeeService.Add(employees.First());
+        await _employeeService.AddAsync(employees.First(), cancellationToken);
 
         //Assert
-        _employeeStorage.Get(1, employees.Count, null).Should().NotBeNull();
+        var existingEmployees = await _employeeStorage.GetAsync(1, employees.Count, null, cancellationToken);
+        
+        existingEmployees.Should().NotBeNull();
     }
 
     [Fact]
-    public void EmployeeServiceGetPagedReturnsPagedEmployees()
+    public async Task EmployeeServiceGetPagedReturnsPagedEmployees()
     {
         //Arrange
         var employees = _testDataGenerator.GenerateEmployees();
+        var cancellationToken = new CancellationTokenSource().Token;
         foreach (var item in employees)
         {
-            _employeeService.Add(item);
+            await _employeeService.AddAsync(item, cancellationToken);
         }
 
         //Act
-        var filteredEmployees = _employeeService.GetPaged(1, 10, null);
+        var filteredEmployees = await _employeeService.GetPagedAsync(1, 10, null, cancellationToken);
 
         //Assert
         filteredEmployees.Should().NotBeNull();
     }
 
     [Fact]
-    public void EmployeeServiceUpdateEmployeeShouldUpdateEmployee()
+    public async Task EmployeeServiceUpdateEmployeeShouldUpdateEmployee()
     {
         //Arrange
         var employees = _testDataGenerator.GenerateEmployees();
         var originalEmployee = employees.First();
         var updatedEmployee = employees.Last();
+        var cancellationToken = new CancellationTokenSource().Token;
 
-        _employeeService.Add(originalEmployee);
-        var employee = _employeeService.GetById(originalEmployee.Id);
+        await _employeeService.AddAsync(originalEmployee, cancellationToken);
+        var employee = await _employeeService.GetByIdASync(originalEmployee.Id, cancellationToken);
         updatedEmployee.Id = employee.Id;
 
         //Act
-        _employeeService.Update(updatedEmployee.Id,updatedEmployee);
+        await _employeeService.UpdateAsync(updatedEmployee.Id,updatedEmployee, cancellationToken);
 
-        var updatedEmployeeFromDb = _employeeService.GetById(originalEmployee.Id);
+        var updatedEmployeeFromDb = _employeeService.GetByIdASync(originalEmployee.Id, cancellationToken);
 
         //Assert
         employee.Should().BeEquivalentTo(updatedEmployee);
     }
 
     [Fact]
-    public void EmployeeServiceDeleteEmployeeShouldDeleteEmployee()
+    public async Task EmployeeServiceDeleteEmployeeShouldDeleteEmployee()
     {
         //Arrange
         var employees = _testDataGenerator.GenerateEmployees();
         var employee = employees.First();
-        _employeeService.Add(employee);
+        var cancellationToken = new CancellationTokenSource().Token;
+        await _employeeService.AddAsync(employee, cancellationToken);
 
         //Act
-        _employeeService.Delete(employee.Id);
+        await _employeeService.DeleteAsync(employee.Id, cancellationToken);
 
         //Assert
-        _employeeStorage.Get(1, employees.Count, null).Should().NotContain(employee);
+        var existingEmployees = await _employeeStorage.GetAsync(1, employees.Count, null, cancellationToken);
+        
+        existingEmployees.Should().NotContain(employee);
     }
 }

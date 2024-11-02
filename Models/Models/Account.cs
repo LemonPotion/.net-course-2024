@@ -4,7 +4,9 @@ public class Account
 {
     public Guid Id { get; set; }
     
-    public int Amount { get; set; }
+    public decimal Amount { get; set; }
+    
+    public DateTime UpdatedOn { get; set; } = DateTime.UtcNow;
     
     public Currency Currency { get; set; }
     
