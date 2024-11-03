@@ -35,7 +35,7 @@ public class ClientController : ControllerBase
     
     
     [HttpGet]
-    public async Task<IActionResult> GetAllClientsPaged([FromQuery] GetAllClientsPagedRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetClients([FromQuery] GetAllClientsPagedRequest request, CancellationToken cancellationToken)
     {
         var result = await _clientService.GetPagedAsync(request, cancellationToken);
         

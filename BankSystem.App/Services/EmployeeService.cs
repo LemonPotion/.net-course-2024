@@ -2,7 +2,6 @@
 using AutoMapper;
 using BankSystem.App.Dto.Employee.Requests;
 using BankSystem.App.Dto.Employee.Responses;
-using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 
@@ -23,7 +22,7 @@ public class EmployeeService
     public async Task AddAsync(CreateEmployeeRequest request, CancellationToken cancellationToken)
     {
         var employee = _mapper.Map<Employee>(request);
-        ValidateEmployee(employee);
+        
         await _employeeStorage.AddAsync(employee, cancellationToken);
     }
 
@@ -43,27 +42,12 @@ public class EmployeeService
     public async Task UpdateAsync(UpdateEmployeeRequest  request, CancellationToken cancellationToken)
     {
         var employee = _mapper.Map<Employee>(request);
-        ValidateEmployee(employee);
+        
         await _employeeStorage.UpdateAsync(employee.Id, employee, cancellationToken);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         await _employeeStorage.DeleteAsync(id, cancellationToken);
-    }
-
-    private static void ValidateEmployee(Employee employee)
-    {
-        if (employee is null)
-        {
-            throw new ArgumentNullException(nameof(employee));
-        }
-        else if (employee.Age < 18)
-            throw new AgeRestrictionException(nameof(employee));
-        else if (employee.FirstName is null || employee.LastName is null || employee.BirthDay == DateTime.MinValue ||
-                 employee.PassportNumber is null)
-        {
-            throw new PassportDataMissingException(nameof(employee));
-        }
     }
 }

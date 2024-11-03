@@ -2,7 +2,6 @@
 using AutoMapper;
 using BankSystem.App.Dto.Client.Requests;
 using BankSystem.App.Dto.Client.Responses;
-using BankSystem.App.Exceptions;
 using BankSystem.App.Interfaces;
 using BankSystem.Domain.Models;
 
@@ -34,8 +33,6 @@ public class ClientService
     public async Task AddAsync(CreateClientRequest request, CancellationToken cancellationToken)
     {
         var client = _mapper.Map<Client>(request);
-        
-        ValidateClient(client);
 
         await _clientStorage.AddAsync(client, cancellationToken);
     }
@@ -58,15 +55,13 @@ public class ClientService
     public async Task UpdateAsync(UpdateClientRequest request,CancellationToken cancellationToken)
     {
         var client = _mapper.Map<Client>(request);
-        
-        ValidateClient(client);
         await _clientStorage.UpdateAsync(client.Id, client, cancellationToken);
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
         var client = await _clientStorage.GetByIdAsync(id, cancellationToken);
-        ValidateClient(client);
+        
         await _clientStorage.DeleteAsync(id, cancellationToken);
     }
 
@@ -83,7 +78,7 @@ public class ClientService
     public async Task<List<Account>> GetAccountsPagedAsync(int pageNumber, int pageSize, Guid clientId, Expression<Func<Account, bool>>? filter, CancellationToken cancellationToken)
     {
         var client = await _clientStorage.GetByIdAsync(clientId, cancellationToken);
-        ValidateClient(client);
+        
         return await _clientStorage.GetAccountsAsync(pageNumber, pageSize, filter, cancellationToken);
     }
 
@@ -95,19 +90,5 @@ public class ClientService
     public async Task DeleteAccountAsync(Guid id, CancellationToken cancellationToken)
     {
         await _clientStorage.DeleteAccountAsync(id, cancellationToken);
-    }
-
-    private static void ValidateClient(Client client)
-    {
-        if (client is null)
-        {
-            throw new ArgumentNullException(nameof(client));
-        }
-        else if (client.Age < 18)
-            throw new AgeRestrictionException(nameof(client));
-        else if (client.PassportNumber is null)
-        {
-            throw new PassportDataMissingException(nameof(client));
-        }
     }
 }

@@ -32,7 +32,7 @@ public class EmployeeController : ControllerBase
     }
     
     [HttpGet]
-    public async Task<IActionResult> GetAllEmployeesPaged([FromQuery] GetAllEmployeesPagedRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetEmployees([FromQuery] GetAllEmployeesPagedRequest request, CancellationToken cancellationToken)
     {
         
         var result = await _employeeService.GetPagedAsync(request, cancellationToken);
