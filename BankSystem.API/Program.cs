@@ -1,5 +1,6 @@
 using BankSystem.App.Interfaces;
 using BankSystem.App.Services;
+using BankSystem.App.Settings;
 using BankSystem.Data.EntityFramework;
 using BankSystem.Data.Storages;
 using BankSystem.Domain.Models;
@@ -20,6 +21,10 @@ public class Program
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
+        builder.Services.Configure<CurrencyApiSettings>(builder.Configuration.GetSection(nameof(CurrencyApiSettings)));
+
+        builder.Services.AddHttpClient();
+
         builder.Services.AddDbContext<BankSystemContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -28,6 +33,7 @@ public class Program
         
         builder.Services.AddScoped<ClientService>();
         builder.Services.AddScoped<EmployeeService>();
+        builder.Services.AddScoped<CurrencyService>();
 
         builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
